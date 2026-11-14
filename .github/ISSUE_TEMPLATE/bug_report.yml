@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a problem in DownRust
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for the report. Fill in the fields below as far as you can.
+
+  - type: input
+    id: version
+    attributes:
+      label: DownRust version
+      description: Shown in Settings, then About.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 Pro 23H2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Part of the app
+      options:
+        - Downloads
+        - Video (HLS or DASH)
+        - Browser extension
+        - Settings
+        - Tray, drop zone or clipboard
+        - Installer or portable mode
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add a download from ...
+        2. Pause it after ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log file
+      description: |
+        Attach the file downrust.log. It is in %LOCALAPPDATA%\com.downrust.desktop\logs (portable mode: data\logs next to DownRust.exe).
+        In portable mode it is in the logs folder next to DownRust.exe, inside the data folder.
+        Remove any private file names or addresses before you attach the file.
+    validations:
+      required: false
