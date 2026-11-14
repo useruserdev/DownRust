@@ -50,8 +50,7 @@ async function importList(): Promise<void> {
       notify('info', t('importList.none'));
       return;
     }
-    useUi.getState().openBatch(urls.join('
-'));
+    useUi.getState().openBatch(urls.join('\n'));
   } catch (err) {
     notify('error', errorText(err));
   }
