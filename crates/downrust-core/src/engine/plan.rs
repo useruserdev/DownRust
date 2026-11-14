@@ -108,6 +108,8 @@ mod tests {
             checksum: None,
             scan: None,
             kind: crate::model::DownloadKind::File,
+            mirrors: Vec::new(),
+            options: None,
         }
     }
 

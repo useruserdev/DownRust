@@ -79,6 +79,17 @@ impl Shared {
     }
 }
 
+/// Name of a download that the engine does not fetch over HTTP, before the transfer finds the
+/// real one.
+fn external_initial_name(address: &str, kind: DownloadKind) -> String {
+    match kind {
+        DownloadKind::Site => crate::engine::site::initial_name(address),
+        DownloadKind::Torrent => crate::engine::torrent::initial_name(address),
+        DownloadKind::Ftp => crate::engine::ftp::initial_name(address),
+        _ => fallback_name(address),
+    }
+}
+
 /// Name used when neither the request nor a probe gives one.
 fn fallback_name(address: &str) -> String {
     url::Url::parse(address.trim())
@@ -155,7 +166,13 @@ impl DownloadManager {
             },
         };
         req.kind = Some(kind);
-        let (file_name, probe) = if kind.is_media() {
+        let (file_name, probe) = if kind.is_external() {
+            let name = req
+                .file_name
+                .take()
+                .unwrap_or_else(|| external_initial_name(&req.url, kind));
+            (name, None)
+        } else if kind.is_media() {
             let convert = self.settings().media.convert_to_mp4;
             let name = match req.file_name.take() {
                 Some(name) => media_name_with_extension(&name, kind, convert),

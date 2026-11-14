@@ -6,7 +6,7 @@ export type Category = 'video' | 'music' | 'archives' | 'programs' | 'documents'
 export type Phase = 'connecting' | 'downloading' | 'finalizing';
 export type ThemeMode = 'system' | 'dark' | 'light';
 export type QueueMove = 'up' | 'down' | 'top' | 'bottom';
-export type DownloadKind = 'file' | 'hls' | 'dash';
+export type DownloadKind = 'file' | 'hls' | 'dash' | 'site' | 'torrent' | 'ftp';
 export type MediaQuality = 'best' | 'worst';
 
 export interface MediaSettings {
@@ -62,6 +62,10 @@ export interface DownloadRecord {
   checksum?: ChecksumState | null;
   scan?: ScanState | null;
   kind?: DownloadKind;
+  /** Other addresses of the same file. */
+  mirrors?: string[];
+  /** Options of the download kind as JSON text. */
+  options?: string | null;
 }
 
 export interface ChecksumReport {
@@ -149,7 +153,24 @@ export interface EngineSettings {
   siteLogins: SiteLogin[];
   scan: ScanSettings;
   media: MediaSettings;
+  site: SiteSettings;
+  torrent: TorrentSettings;
+  speedSchedule: SpeedSchedule;
+  /** Looks for a published SHA-256 next to a finished file and checks the file against it. */
+  autoChecksum: boolean;
 }
+
+/** Settings for video sites downloaded with yt-dlp. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface SiteSettings {}
+
+/** Settings for torrent downloads. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface TorrentSettings {}
+
+/** Speed limits that change with the time of day. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface SpeedSchedule {}
 
 export interface ProxyRule {
   host: string;

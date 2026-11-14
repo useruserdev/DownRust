@@ -13,6 +13,9 @@ mod media;
 mod network;
 mod scan;
 mod schedule;
+mod site;
+mod speed_schedule;
+mod torrent;
 
 pub use media::{MediaQuality, MediaSettings};
 pub use network::{
@@ -21,6 +24,9 @@ pub use network::{
 };
 pub use scan::{ScanSettings, DEFAULT_SCAN_ARGS};
 pub use schedule::{in_window, is_open_now, Schedule};
+pub use site::SiteSettings;
+pub use speed_schedule::SpeedSchedule;
+pub use torrent::TorrentSettings;
 
 pub const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
 pub const MAX_CONNECTIONS: u8 = 32;
@@ -57,6 +63,15 @@ pub struct EngineSettings {
     pub scan: ScanSettings,
     #[serde(default)]
     pub media: MediaSettings,
+    #[serde(default)]
+    pub site: SiteSettings,
+    #[serde(default)]
+    pub torrent: TorrentSettings,
+    #[serde(default)]
+    pub speed_schedule: SpeedSchedule,
+    /// Looks for a published SHA-256 next to a finished file and checks the file against it.
+    #[serde(default)]
+    pub auto_checksum: bool,
 }
 
 impl Default for EngineSettings {
@@ -85,6 +100,10 @@ impl Default for EngineSettings {
             site_logins: Vec::new(),
             scan: ScanSettings::default(),
             media: MediaSettings::default(),
+            site: SiteSettings::default(),
+            torrent: TorrentSettings::default(),
+            speed_schedule: SpeedSchedule::default(),
+            auto_checksum: true,
         }
     }
 }

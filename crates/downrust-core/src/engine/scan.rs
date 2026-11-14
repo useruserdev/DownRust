@@ -220,6 +220,8 @@ mod tests {
                     created_at: 0,
                     expected_sha256: None,
                     kind: crate::model::DownloadKind::File,
+                    mirrors: Vec::new(),
+                    options: None,
                 })
                 .expect("row");
             (store, record.id)

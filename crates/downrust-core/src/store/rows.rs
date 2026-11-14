@@ -14,7 +14,7 @@ use crate::{
 pub(super) const RECORD_COLUMNS: &str = "id, url, final_url, referrer, file_name, save_dir, \
     category, status, total_size, downloaded, resumable, connections, speed_limit, etag, \
     last_modified, content_type, error, queue_position, headers_json, created_at, completed_at, \
-    expected_sha256, checksum_state, scan_state, kind";
+    expected_sha256, checksum_state, scan_state, kind, mirrors_json, options_json";
 
 /// Stores a u64 as an i64 with the same bits.
 pub(super) fn to_db(value: u64) -> i64 {
@@ -38,6 +38,9 @@ pub(super) fn row_to_record(row: &Row<'_>) -> rusqlite::Result<DownloadRecord> {
     let headers_json: String = row.get(18)?;
     let headers: Vec<HeaderPair> = serde_json::from_str(&headers_json)
         .map_err(|err| rusqlite::Error::FromSqlConversionFailure(18, Type::Text, Box::new(err)))?;
+    let mirrors_json: String = row.get(25)?;
+    let mirrors: Vec<String> = serde_json::from_str(&mirrors_json)
+        .map_err(|err| rusqlite::Error::FromSqlConversionFailure(25, Type::Text, Box::new(err)))?;
     Ok(DownloadRecord {
         id: row.get(0)?,
         url: row.get(1)?,
@@ -71,5 +74,7 @@ pub(super) fn row_to_record(row: &Row<'_>) -> rusqlite::Result<DownloadRecord> {
             .get::<_, Option<String>>(24)?
             .and_then(|text| DownloadKind::parse(&text))
             .unwrap_or_default(),
+        mirrors,
+        options: row.get(26)?,
     })
 }

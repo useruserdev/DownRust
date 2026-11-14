@@ -60,6 +60,15 @@ pub fn run() {
             crate::dropzone::set_drop_zone_visible,
             crate::dropzone::show_main,
             crate::dropzone::handle_dropped_links,
+            // Video sites.
+
+            // Torrents and FTP.
+
+            // Updates, About and the command line.
+
+            // Browser link grabber.
+
+            // Import, mirrors and speed schedule.
         ])
         .run(tauri::generate_context!())
         .expect("DownRust failed to start");

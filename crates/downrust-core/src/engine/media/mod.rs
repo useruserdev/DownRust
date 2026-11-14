@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! HLS and DASH transfers, and the dispatch of a download by its kind.
+//! HLS and DASH transfers, and the dispatch of a download of any kind.
 pub(crate) mod crypto;
 pub(crate) mod dash;
 pub(crate) mod fetch;
@@ -23,6 +23,9 @@ pub(crate) async fn run_download(ctx: TaskContext) -> TaskOutcome {
         DownloadKind::File => return run_task(ctx).await,
         DownloadKind::Hls => hls::run(&ctx).await,
         DownloadKind::Dash => dash::run(&ctx).await,
+        DownloadKind::Site => crate::engine::site::run(&ctx).await,
+        DownloadKind::Torrent => crate::engine::torrent::run(&ctx).await,
+        DownloadKind::Ftp => crate::engine::ftp::run(&ctx).await,
     };
     match result {
         Ok(TaskOutcome::Completed) => verify_completed(&ctx).await,

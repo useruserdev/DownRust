@@ -466,6 +466,9 @@ export const ru: Messages = {
   kind: {
     hls: 'HLS',
     dash: 'DASH',
+    site: 'Видео',
+    torrent: 'Торрент',
+    ftp: 'FTP',
   },
   video: {
     section: 'Видео',
@@ -481,5 +484,45 @@ export const ru: Messages = {
   },
   app: {
     dropHint: 'Перетащите ссылку, чтобы добавить загрузку',
+  },
+
+  // Video sites (yt-dlp).
+  site: {
+    title: 'Сайт с видео',
+  },
+
+  // Torrents.
+  torrent: {
+    title: 'Торрент',
+  },
+
+  // FTP and SFTP.
+  ftp: {
+    title: 'FTP',
+  },
+
+  // Updates and the About page.
+  update: {
+    title: 'Обновления',
+  },
+
+  // Links collected from a web page.
+  grabber: {
+    title: 'Ссылки со страницы',
+  },
+
+  // Import of a download list.
+  importList: {
+    title: 'Импорт списка',
+  },
+
+  // Mirrors of one file.
+  mirrors: {
+    title: 'Зеркала',
+  },
+
+  // Speed limits by time of day.
+  speedSchedule: {
+    title: 'Расписание скорости',
   },
 };

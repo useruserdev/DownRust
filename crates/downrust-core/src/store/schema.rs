@@ -38,6 +38,10 @@ CREATE TABLE stats_category (category TEXT PRIMARY KEY, bytes INTEGER NOT NULL, 
     r#"
 ALTER TABLE downloads ADD COLUMN kind TEXT NOT NULL DEFAULT 'file';
 "#,
+    r#"
+ALTER TABLE downloads ADD COLUMN mirrors_json TEXT NOT NULL DEFAULT '[]';
+ALTER TABLE downloads ADD COLUMN options_json TEXT NULL;
+"#,
 ];
 
 /// Version that creates the statistics tables. Its step also fills them from older downloads.
@@ -109,7 +113,7 @@ mod tests {
     fn fresh_file_database_is_migrated() {
         let dir = tempfile::tempdir().expect("temp dir");
         let store = Store::open(&dir.path().join("downrust.db")).expect("open");
-        assert_eq!(user_version(&store), 4);
+        assert_eq!(user_version(&store), 5);
         assert_eq!(table_count(&store), 3);
         assert!(has_checksum_columns(&store.lock()));
     }
@@ -120,14 +124,14 @@ mod tests {
         let path = dir.path().join("downrust.db");
         drop(Store::open(&path).expect("first open"));
         let store = Store::open(&path).expect("second open");
-        assert_eq!(user_version(&store), 4);
+        assert_eq!(user_version(&store), 5);
         assert_eq!(table_count(&store), 3);
     }
 
     #[test]
     fn in_memory_database_is_migrated() {
         let store = Store::open_in_memory().expect("open");
-        assert_eq!(user_version(&store), 4);
+        assert_eq!(user_version(&store), 5);
         assert_eq!(table_count(&store), 3);
     }
 
@@ -151,7 +155,7 @@ mod tests {
         let version: i64 = conn
             .query_row("PRAGMA user_version", [], |row| row.get(0))
             .expect("version");
-        assert_eq!(version, 4);
+        assert_eq!(version, 5);
         assert!(has_checksum_columns(&conn));
         let (name, expected): (String, Option<String>) = conn
             .query_row(
@@ -230,7 +234,7 @@ mod tests {
         let version: i64 = conn
             .query_row("PRAGMA user_version", [], |row| row.get(0))
             .expect("version");
-        assert_eq!(version, 4);
+        assert_eq!(version, 5);
         let kind: String = conn
             .query_row("SELECT kind FROM downloads", [], |row| row.get(0))
             .expect("kind column");

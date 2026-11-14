@@ -440,6 +440,9 @@ export const en = {
   kind: {
     hls: 'HLS',
     dash: 'DASH',
+    site: 'Video',
+    torrent: 'Torrent',
+    ftp: 'FTP',
   },
   video: {
     section: 'Video',
@@ -455,5 +458,45 @@ export const en = {
   },
   app: {
     dropHint: 'Drop link to add download',
+  },
+
+  // Video sites (yt-dlp).
+  site: {
+    title: 'Video site',
+  },
+
+  // Torrents.
+  torrent: {
+    title: 'Torrent',
+  },
+
+  // FTP and SFTP.
+  ftp: {
+    title: 'FTP',
+  },
+
+  // Updates and the About page.
+  update: {
+    title: 'Updates',
+  },
+
+  // Links collected from a web page.
+  grabber: {
+    title: 'Links from the page',
+  },
+
+  // Import of a download list.
+  importList: {
+    title: 'Import list',
+  },
+
+  // Mirrors of one file.
+  mirrors: {
+    title: 'Mirrors',
+  },
+
+  // Speed limits by time of day.
+  speedSchedule: {
+    title: 'Speed schedule',
   },
 } as const;

@@ -117,6 +117,8 @@ mod tests {
             .insert_download(&NewDownload {
                 expected_sha256: None,
                 kind: crate::model::DownloadKind::File,
+                mirrors: Vec::new(),
+                options: None,
                 url: server.url(&file_url(size, &FileOpts::default())),
                 final_url: None,
                 referrer: None,

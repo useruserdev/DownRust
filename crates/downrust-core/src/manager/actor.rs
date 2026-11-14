@@ -174,6 +174,8 @@ impl ManagerActor {
             created_at: now_ms(),
             expected_sha256: add.req.expected_sha256.clone(),
             kind: add.req.kind.unwrap_or_default(),
+            mirrors: add.req.mirrors.clone(),
+            options: add.req.options.clone(),
         };
         let record = self.shared.store.insert_download(&new)?;
         self.emit(EngineEvent::Added(record.clone()));
@@ -304,6 +306,8 @@ mod tests {
             created_at: 0,
             expected_sha256: None,
             kind: crate::model::DownloadKind::File,
+            mirrors: Vec::new(),
+            options: None,
         }
     }
 

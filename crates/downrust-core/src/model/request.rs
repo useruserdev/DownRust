@@ -18,6 +18,8 @@ pub struct AddRequest {
     pub probe: Option<ProbeInfo>, // result the Add dialog already fetched
     pub expected_sha256: Option<String>, // checked after the transfer when set
     pub kind: Option<DownloadKind>, // None means detect from the address and the response type
+    pub mirrors: Vec<String>,     // other addresses of the same file
+    pub options: Option<String>,  // options of the download kind as JSON text
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

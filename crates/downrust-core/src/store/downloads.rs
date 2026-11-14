@@ -17,9 +17,9 @@ pub(super) fn insert(conn: &Connection, new: &NewDownload) -> Result<DownloadRec
         "INSERT INTO downloads (url, final_url, referrer, file_name, save_dir, category, status, \
          total_size, downloaded, resumable, connections, speed_limit, etag, last_modified, \
          content_type, error, queue_position, headers_json, created_at, completed_at, \
-         expected_sha256, kind) \
+         expected_sha256, kind, mirrors_json, options_json) \
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 0, ?9, ?10, ?11, ?12, ?13, ?14, NULL, ?15, ?16, ?17, \
-         NULL, ?18, ?19)",
+         NULL, ?18, ?19, ?20, ?21)",
         params![
             new.url,
             new.final_url,
@@ -40,6 +40,8 @@ pub(super) fn insert(conn: &Connection, new: &NewDownload) -> Result<DownloadRec
             new.created_at,
             new.expected_sha256,
             new.kind.as_str(),
+            serde_json::to_string(&new.mirrors)?,
+            new.options,
         ],
     )?;
     let id = conn.last_insert_rowid();
@@ -225,6 +227,8 @@ pub(super) fn sample_download(file_name: &str) -> NewDownload {
         created_at: 100,
         expected_sha256: None,
         kind: crate::model::DownloadKind::File,
+        mirrors: Vec::new(),
+        options: None,
     }
 }
 

@@ -43,6 +43,10 @@ pub struct DownloadRecord {
     pub checksum: Option<ChecksumState>,
     pub scan: Option<ScanState>,
     pub kind: DownloadKind,
+    /// Other addresses of the same file. Connections spread over the main address and these.
+    pub mirrors: Vec<String>,
+    /// Options of the download kind as JSON text, for example the chosen video format.
+    pub options: Option<String>,
 }
 
 impl DownloadRecord {
@@ -94,4 +98,6 @@ pub struct NewDownload {
     pub created_at: i64,
     pub expected_sha256: Option<String>,
     pub kind: DownloadKind,
+    pub mirrors: Vec<String>,
+    pub options: Option<String>,
 }
