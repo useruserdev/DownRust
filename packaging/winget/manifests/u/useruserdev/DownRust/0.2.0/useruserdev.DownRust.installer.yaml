@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json
+PackageIdentifier: useruserdev.DownRust
+PackageVersion: 0.2.0
+InstallerLocale: en-US
+Platform:
+  - Windows.Desktop
+MinimumOSVersion: 10.0.17763.0
+InstallerType: nullsoft
+Scope: user
+InstallModes:
+  - interactive
+  - silent
+UpgradeBehavior: install
+Protocols:
+  - downrust
+ReleaseDate: 2026-11-14
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/useruserdev/DownRust/releases/download/v0.2.0/DownRust_0.2.0_x64-setup.exe
+    InstallerSha256: 4968FAAD1D06554F58557A38ABAFC0F9AAC23D81A50072E93976AD15742BCCAD
+ManifestType: installer
+ManifestVersion: 1.9.0

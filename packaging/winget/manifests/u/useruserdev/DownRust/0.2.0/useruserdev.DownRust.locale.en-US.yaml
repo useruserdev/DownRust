@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.9.0.schema.json
+PackageIdentifier: useruserdev.DownRust
+PackageVersion: 0.2.0
+PackageLocale: en-US
+Publisher: DownRust contributors
+PublisherUrl: https://github.com/useruserdev/DownRust
+PublisherSupportUrl: https://github.com/useruserdev/DownRust/issues
+PackageName: DownRust
+PackageUrl: https://github.com/useruserdev/DownRust
+License: GPL-3.0-or-later
+LicenseUrl: https://github.com/useruserdev/DownRust/blob/main/LICENSE
+ShortDescription: Fast segmented download manager for Windows, written in Rust.
+Description: DownRust downloads files over several connections, resumes after a pause or a crash, and also handles video sites, HLS and DASH streams, torrents, FTP and SFTP. It has a queue with a schedule, speed limits and a browser extension.
+Moniker: downrust
+Tags:
+  - download-manager
+  - downloader
+  - rust
+  - torrent
+  - youtube
+  - hls
+ReleaseNotesUrl: https://github.com/useruserdev/DownRust/releases/tag/v0.2.0
+ManifestType: defaultLocale
+ManifestVersion: 1.9.0
