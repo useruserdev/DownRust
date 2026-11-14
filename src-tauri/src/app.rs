@@ -6,8 +6,10 @@ pub const MINIMIZED_ARG: &str = "--minimized";
 
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            crate::window::show_main(app)
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            let args: Vec<String> = args.into_iter().skip(1).collect();
+            let command = crate::cli::parse(&args, |path| std::path::Path::new(path).is_file());
+            crate::cli::apply(app, command);
         }))
         .plugin(
             tauri_plugin_window_state::Builder::new()
@@ -18,6 +20,9 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec![MINIMIZED_ARG]),
@@ -65,7 +70,10 @@ pub fn run() {
             // Torrents and FTP.
 
             // Updates, About and the command line.
-
+            crate::updater::check_update,
+            crate::updater::install_update,
+            crate::updater::open_link,
+            crate::cli::set_magnet_handler,
             // Browser link grabber.
 
             // Import, mirrors and speed schedule.

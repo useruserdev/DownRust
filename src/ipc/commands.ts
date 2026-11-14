@@ -15,6 +15,7 @@ import type {
   ProbeInfo,
   QueueMove,
   TargetSuggestion,
+  UpdateInfo,
 } from './types';
 
 async function call<T>(command: string, args?: Record<string, unknown>): Promise<T> {
@@ -59,4 +60,8 @@ export const api = {
   getAfterQueueAction: () => call<AfterQueueAction>('get_after_queue_action'),
   cancelAfterQueue: () => call<null>('cancel_after_queue'),
   detectFfmpeg: () => call<FfmpegInfo | null>('detect_ffmpeg'),
+  checkUpdate: () => call<UpdateInfo>('check_update'),
+  installUpdate: () => call<null>('install_update'),
+  openLink: (url: string) => call<null>('open_link', {url}),
+  setMagnetHandler: (enabled: boolean) => call<null>('set_magnet_handler', {enabled}),
 };

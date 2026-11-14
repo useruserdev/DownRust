@@ -18,6 +18,15 @@ pub const CLIPBOARD_URL: &str = "clipboard-url";
 pub const OPEN_ADD_DIALOG: &str = "open-add-dialog";
 pub const SETTINGS_CHANGED: &str = "settings-changed";
 pub const EXTERNAL_ADD_REQUEST: &str = "external-add-request";
+pub const UPDATE_AVAILABLE: &str = "update-available";
+pub const UPDATE_PROGRESS: &str = "update-progress";
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateProgressPayload {
+    pub downloaded: u64,
+    pub total: Option<u64>,
+}
 
 #[derive(Clone, Serialize)]
 pub struct IdPayload {
@@ -63,6 +72,7 @@ fn forward(app: &AppHandle, event: EngineEvent, last_tooltip: &mut Option<Instan
         EngineEvent::QueueIdle => crate::after_queue::on_queue_idle(app),
         EngineEvent::Progress(batch) => {
             update_tooltip(app, &batch, last_tooltip);
+            crate::taskbar::update(app, &batch);
             emit(app, DOWNLOAD_PROGRESS, batch);
         }
         EngineEvent::Completed(record) => {

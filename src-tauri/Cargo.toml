@@ -21,6 +21,10 @@ tauri-plugin-dialog = "~2.8.4"
 tauri-plugin-opener = "~2.7.3"
 tauri-plugin-autostart = "~2.7.0"
 tauri-plugin-clipboard-manager = "~2.5.0"
+tauri-plugin-updater = "~2.14.1"
+tauri-plugin-process = "~2.4.0"
+tauri-plugin-deep-link = "~2.6.3"
+reqwest = { workspace = true }
 axum = { workspace = true }
 tauri-plugin-window-state = "~2.5.0"
 serde = { workspace = true }
@@ -35,4 +39,5 @@ sys-locale = "0.3.2"
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Power"] }
-windows = { version = "0.62", features = ["Data_Xml_Dom", "UI_Notifications", "Foundation"] }
+windows = { version = "0.62", features = ["Data_Xml_Dom", "UI_Notifications", "Foundation", "Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_PropertiesSystem"] }
+winreg = "0.56"

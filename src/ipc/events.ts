@@ -12,6 +12,8 @@ import type {
   ExternalAddRequest,
   OpenBatchPayload,
   ProgressBatch,
+  UpdateInfo,
+  UpdateProgress,
 } from './types';
 
 /** Event names emitted by the backend. */
@@ -28,6 +30,8 @@ export const EVENTS = {
   settingsChanged: 'settings-changed',
   afterQueueCountdown: AFTER_QUEUE_COUNTDOWN_EVENT,
   afterQueueCancelled: AFTER_QUEUE_CANCELLED_EVENT,
+  updateAvailable: 'update-available',
+  updateProgress: 'update-progress',
 } as const;
 
 export interface EventPayloads {
@@ -43,6 +47,8 @@ export interface EventPayloads {
   'settings-changed': AppSettings;
   'after-queue-countdown': AfterQueueCountdown;
   'after-queue-cancelled': undefined;
+  'update-available': UpdateInfo;
+  'update-progress': UpdateProgress;
 }
 
 export type EventName = keyof EventPayloads;

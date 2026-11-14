@@ -34,11 +34,15 @@ jobs:
 
       - name: Build the installers and create a draft release
         uses: tauri-apps/tauri-action@v0
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: "DownRust ${{ github.ref_name }}"
           releaseDraft: true
           prerelease: false
+          includeUpdaterJson: true
 
       - name: Build the browser extension package
         run: npm run extension:build

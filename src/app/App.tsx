@@ -22,10 +22,12 @@ import {
 import {ToastBridge} from './ToastBridge';
 import {useBootstrap} from './useBootstrap';
 import {useKeyboardShortcuts} from './useKeyboardShortcuts';
+import {useUpdateCheck} from './useUpdateCheck';
 
 export function App() {
   useBootstrap();
   useKeyboardShortcuts();
+  useUpdateCheck();
   const mode = useSettings(state => state.value?.theme ?? 'system');
   const view = useUi(state => state.view);
   // Keying the tree by language remounts it, so every label is read again in the new language.
