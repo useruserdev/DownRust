@@ -75,7 +75,7 @@ function defaultSettings(): AppSettings {
       scan: {enabled: false, program: '', args: '-Scan -ScanType 3 -File "{file}" -DisableRemediation'},
       media: {ffmpegPath: '', convertToMp4: true, quality: 'best'},
       site: {},
-      torrent: {},
+      torrent: {listenPort: 0, enableDht: true, enableUpnp: true, seedAfterFinish: false, uploadLimit: null},
       speedSchedule: {},
       autoChecksum: true,
     },

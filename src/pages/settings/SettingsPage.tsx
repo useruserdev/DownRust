@@ -17,9 +17,10 @@ import {GeneralSection} from './GeneralSection';
 import {NetworkSection} from './NetworkSection';
 import {ScheduleSection} from './ScheduleSection';
 import {SitesSection} from './SitesSection';
+import {TorrentSection} from './TorrentSection';
 import {VideoSection} from './VideoSection';
 
-const SECTIONS = ['general', 'downloads', 'video', 'schedule', 'network', 'sites', 'browser', 'about'] as const;
+const SECTIONS = ['general', 'downloads', 'video', 'schedule', 'network', 'sites', 'torrent', 'browser', 'about'] as const;
 type SectionName = (typeof SECTIONS)[number];
 
 const SECTION_LABEL: Record<SectionName, MessageKey> = {
@@ -29,6 +30,7 @@ const SECTION_LABEL: Record<SectionName, MessageKey> = {
   schedule: 'settings.section.schedule',
   network: 'settings.section.network',
   sites: 'settings.section.sites',
+  torrent: 'torrent.title',
   browser: 'settings.section.browser',
   about: 'settings.section.about',
 };
@@ -108,6 +110,8 @@ function SectionView({
       return <NetworkSection settings={settings} update={update} />;
     case 'sites':
       return <SitesSection settings={settings} update={update} />;
+    case 'torrent':
+      return <TorrentSection settings={settings} update={update} />;
     case 'browser':
       return <BrowserSection settings={settings} update={update} />;
     case 'about':

@@ -132,6 +132,20 @@ pub(super) fn record_finished_file(
     Ok(())
 }
 
+/// Stores the name and the total size of a torrent once its metadata is known.
+pub(super) fn set_name_and_size(
+    conn: &Connection,
+    id: DownloadId,
+    file_name: &str,
+    total: u64,
+) -> Result<()> {
+    conn.execute(
+        "UPDATE downloads SET file_name = ?2, total_size = ?3 WHERE id = ?1",
+        params![id, file_name, to_db(total)],
+    )?;
+    Ok(())
+}
+
 pub(super) fn set_scan_state(
     conn: &Connection,
     id: DownloadId,
