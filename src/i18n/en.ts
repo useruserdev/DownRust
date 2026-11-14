@@ -483,6 +483,20 @@ export const en = {
   // Links collected from a web page.
   grabber: {
     title: 'Links from the page',
+    typeLabel: 'Type',
+    filterAll: 'All',
+    filterVideo: 'Video',
+    filterAudio: 'Audio',
+    filterArchives: 'Archives',
+    filterDocuments: 'Documents',
+    filterPrograms: 'Programs',
+    filterImages: 'Images',
+    filterOther: 'Other',
+    search: 'Search links',
+    selectAll: 'Select all',
+    selectNone: 'Select none',
+    selectedCount: {one: '{count} selected', other: '{count} selected'},
+    noMatches: 'No links match the filter.',
   },
 
   // Import of a download list.

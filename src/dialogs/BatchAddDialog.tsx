@@ -3,11 +3,13 @@ import {useMemo, useRef, useState} from 'react';
 import {open as pickFolder} from '@tauri-apps/plugin-dialog';
 import {Banner} from '@astryxdesign/core/Banner';
 import {Button} from '@astryxdesign/core/Button';
+import {CheckboxInput} from '@astryxdesign/core/CheckboxInput';
 import {Dialog, DialogHeader} from '@astryxdesign/core/Dialog';
 import {FileInput} from '@astryxdesign/core/FileInput';
 import {HStack, Layout, LayoutContent, LayoutFooter, StackItem, VStack} from '@astryxdesign/core/Layout';
 import {List, ListItem} from '@astryxdesign/core/List';
 import {ProgressBar} from '@astryxdesign/core/ProgressBar';
+import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/SegmentedControl';
 import {Slider} from '@astryxdesign/core/Slider';
 import {Switch} from '@astryxdesign/core/Switch';
 import {Text} from '@astryxdesign/core/Text';
@@ -19,18 +21,36 @@ import {api} from '../ipc/commands';
 import {inTauri} from '../ipc/runtime';
 import type {AddRequest} from '../ipc/types';
 import {findDuplicate} from '../lib/duplicates';
+import {fileNameFromLink, filterLinks, LINK_FILTERS} from '../lib/linkFilter';
+import type {LinkFilter} from '../lib/linkFilter';
 import {errorText, notify} from '../lib/notify';
 import {expandLinks} from '../lib/urlPattern';
 import {useDownloads} from '../state/downloads';
 import {useSettings} from '../state/settings';
 import {useUi} from '../state/ui';
 import {t} from '../i18n';
+import type {MessageKey} from '../i18n';
 
 const PREVIEW_COUNT = 10;
 const FALLBACK_CONNECTIONS = 8;
 const LINK_LIMIT = 10000;
 
-/** Batch add dialog: many links or patterns in one text box, added one by one. Driven by `useUi().batchDialog`. */
+const FILTER_LABEL: Record<LinkFilter, MessageKey> = {
+  all: 'grabber.filterAll',
+  video: 'grabber.filterVideo',
+  audio: 'grabber.filterAudio',
+  archives: 'grabber.filterArchives',
+  documents: 'grabber.filterDocuments',
+  programs: 'grabber.filterPrograms',
+  images: 'grabber.filterImages',
+  other: 'grabber.filterOther',
+};
+
+/**
+ * Batch add dialog. Text mode: many links or patterns in one text box.
+ * List mode: links sent by the browser extension, shown as rows with checkboxes.
+ * Both modes add one link at a time. Driven by `useUi().batchDialog`.
+ */
 export function BatchAddDialog() {
   const isOpen = useUi(state => state.batchDialog.open);
   const seq = useUi(state => state.batchDialog.seq);
@@ -53,12 +73,19 @@ export function BatchAddDialog() {
 
 function BatchForm() {
   const initialText = useUi(state => state.batchDialog.text);
+  const initialLinks = useUi(state => state.batchDialog.links);
+  const referrer = useUi(state => state.batchDialog.referrer);
+  const headers = useUi(state => state.batchDialog.headers);
   const closeBatch = useUi(state => state.closeBatch);
   const upsert = useDownloads(state => state.upsert);
   const records = useDownloads(state => state.records);
   const defaults = useSettings(state => state.value?.engine);
 
+  const listMode = initialLinks.length > 0;
   const [text, setText] = useState(initialText);
+  const [picked, setPicked] = useState<Set<string>>(() => new Set(initialLinks.map(link => link.url)));
+  const [filter, setFilter] = useState<LinkFilter>('all');
+  const [query, setQuery] = useState('');
   const [saveDir, setSaveDir] = useState(defaults?.defaultDir ?? '');
   const [connections, setConnections] = useState(defaults?.defaultConnections ?? FALLBACK_CONNECTIONS);
   const [skipDuplicates, setSkipDuplicates] = useState(true);
@@ -68,7 +95,13 @@ function BatchForm() {
   const userPickedDir = useRef(false);
 
   const expanded = useMemo(() => expandLinks(text, LINK_LIMIT), [text]);
-  const links = expanded.links;
+  const visibleLinks = useMemo(
+    () => filterLinks(initialLinks, filter, query),
+    [initialLinks, filter, query],
+  );
+  const links = listMode
+    ? initialLinks.map(link => link.url).filter(url => picked.has(url))
+    : expanded.links;
 
   const existing = useMemo(() => Object.values(records), [records]);
   const duplicateLinks = useMemo(() => {
@@ -92,13 +125,34 @@ function BatchForm() {
       .catch(err => notify('error', errorText(err)));
   }
 
+  function togglePicked(url: string, checked: boolean) {
+    setPicked(current => {
+      const next = new Set(current);
+      if (checked) next.add(url);
+      else next.delete(url);
+      return next;
+    });
+  }
+
+  /** Select all and Select none act on the rows that the filter and search show. */
+  function setVisiblePicked(checked: boolean) {
+    setPicked(current => {
+      const next = new Set(current);
+      for (const link of visibleLinks) {
+        if (checked) next.add(link.url);
+        else next.delete(link.url);
+      }
+      return next;
+    });
+  }
+
   async function browse() {
     if (!inTauri) return;
     try {
-      const picked = await pickFolder({directory: true, multiple: false, defaultPath: saveDir || undefined});
-      if (typeof picked === 'string') {
+      const chosen = await pickFolder({directory: true, multiple: false, defaultPath: saveDir || undefined});
+      if (typeof chosen === 'string') {
         userPickedDir.current = true;
-        setSaveDir(picked);
+        setSaveDir(chosen);
       }
     } catch (err) {
       notify('error', errorText(err));
@@ -120,8 +174,8 @@ function BatchForm() {
         connections,
         speedLimit: null,
         start: startNow,
-        referrer: null,
-        headers: [],
+        referrer: listMode ? referrer : null,
+        headers: listMode ? headers : [],
         probe: null,
       };
       try {
@@ -144,51 +198,116 @@ function BatchForm() {
 
   return (
     <Layout
-      header={<DialogHeader title={t('batch.title')} onOpenChange={close} />}
+      header={<DialogHeader title={listMode ? t('grabber.title') : t('batch.title')} onOpenChange={close} />}
       content={
         <LayoutContent>
           <VStack gap={4}>
-            <TextArea
-              label={t('batch.linksLabel')}
-              description={t('batch.hint')}
-              value={text}
-              onChange={setText}
-              placeholder="https://example.com/file[001-020].jpg"
-              rows={8}
-              hasAutoFocus
-            />
+            {!listMode && (
+              <>
+                <TextArea
+                  label={t('batch.linksLabel')}
+                  description={t('batch.hint')}
+                  value={text}
+                  onChange={setText}
+                  placeholder="https://example.com/file[001-020].jpg"
+                  rows={8}
+                  hasAutoFocus
+                />
 
-            <FileInput
-              label={t('batch.importFile')}
-              accept=".txt,text/plain"
-              value={null}
-              onChange={importFile}
-              isDisabled={busy}
-            />
+                <FileInput
+                  label={t('batch.importFile')}
+                  accept=".txt,text/plain"
+                  value={null}
+                  onChange={importFile}
+                  isDisabled={busy}
+                />
 
-            <HStack gap={4} vAlign="center">
-              <Text type="supporting" hasTabularNumbers>{t('batch.linksCount', {count: links.length})}</Text>
-              <Text type="supporting" hasTabularNumbers>{t('batch.linesIgnored', {count: expanded.invalid})}</Text>
-              <Text type="supporting" hasTabularNumbers>{t('batch.alreadyInList', {count: duplicateLinks.size})}</Text>
-            </HStack>
+                <HStack gap={4} vAlign="center">
+                  <Text type="supporting" hasTabularNumbers>{t('batch.linksCount', {count: links.length})}</Text>
+                  <Text type="supporting" hasTabularNumbers>{t('batch.linesIgnored', {count: expanded.invalid})}</Text>
+                  <Text type="supporting" hasTabularNumbers>{t('batch.alreadyInList', {count: duplicateLinks.size})}</Text>
+                </HStack>
 
-            {expanded.truncated && (
-              <Banner status="warning" title={t('batch.truncated', {max: LINK_LIMIT})} />
+                {expanded.truncated && (
+                  <Banner status="warning" title={t('batch.truncated', {max: LINK_LIMIT})} />
+                )}
+
+                {preview.length > 0 && (
+                  <List
+                    header={<Text type="label">{t('batch.preview', {count: preview.length})}</Text>}
+                    hasDividers
+                    density="compact">
+                    {preview.map(link => (
+                      <ListItem
+                        key={link}
+                        label={link}
+                        description={duplicateLinks.has(link) ? t('batch.inList') : undefined}
+                      />
+                    ))}
+                  </List>
+                )}
+              </>
             )}
 
-            {preview.length > 0 && (
-              <List
-                header={<Text type="label">{t('batch.preview', {count: preview.length})}</Text>}
-                hasDividers
-                density="compact">
-                {preview.map(link => (
-                  <ListItem
-                    key={link}
-                    label={link}
-                    description={duplicateLinks.has(link) ? t('batch.inList') : undefined}
+            {listMode && (
+              <>
+                <SegmentedControl
+                  label={t('grabber.typeLabel')}
+                  value={filter}
+                  onChange={value => setFilter(value as LinkFilter)}
+                  size="sm"
+                  layout="fill">
+                  {LINK_FILTERS.map(item => (
+                    <SegmentedControlItem key={item} value={item} label={t(FILTER_LABEL[item])} />
+                  ))}
+                </SegmentedControl>
+
+                <TextInput label={t('grabber.search')} value={query} onChange={setQuery} />
+
+                <HStack gap={2} vAlign="center">
+                  <Button
+                    label={t('grabber.selectAll')}
+                    variant="secondary"
+                    clickAction={() => setVisiblePicked(true)}
+                    isDisabled={busy || visibleLinks.length === 0}
                   />
-                ))}
-              </List>
+                  <Button
+                    label={t('grabber.selectNone')}
+                    variant="secondary"
+                    clickAction={() => setVisiblePicked(false)}
+                    isDisabled={busy || visibleLinks.length === 0}
+                  />
+                  <Text type="supporting" hasTabularNumbers>
+                    {t('grabber.selectedCount', {count: links.length})}
+                  </Text>
+                </HStack>
+
+                {visibleLinks.length > 0 ? (
+                  <List hasDividers density="compact">
+                    {visibleLinks.map(link => {
+                      const name = fileNameFromLink(link.url) || link.url;
+                      return (
+                        <ListItem
+                          key={link.url}
+                          startContent={
+                            <CheckboxInput
+                              label={name}
+                              isLabelHidden
+                              value={picked.has(link.url)}
+                              onChange={checked => togglePicked(link.url, checked)}
+                              isDisabled={busy}
+                            />
+                          }
+                          label={name}
+                          description={duplicateLinks.has(link.url) ? t('batch.inList') : link.text || link.url}
+                        />
+                      );
+                    })}
+                  </List>
+                ) : (
+                  <Text type="supporting">{t('grabber.noMatches')}</Text>
+                )}
+              </>
             )}
 
             <HStack gap={2} vAlign="end">

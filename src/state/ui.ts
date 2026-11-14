@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import {create} from 'zustand';
-import type {AfterQueueAction, AfterQueueCountdown, DownloadId, DownloadKind, HeaderPair} from '../ipc/types';
+import type {AfterQueueAction, AfterQueueCountdown, BatchLink, DownloadId, DownloadKind, HeaderPair} from '../ipc/types';
 
 export type ViewName = 'downloads' | 'settings' | 'stats';
 
@@ -30,9 +30,17 @@ export interface AddDialogState extends AddPrefill {
   seq: number;
 }
 
-export interface BatchDialogState {
+/** Page details that come with links from the browser extension. */
+export interface BatchOptions {
+  referrer: string | null;
+  headers: HeaderPair[];
+}
+
+export interface BatchDialogState extends BatchOptions {
   open: boolean;
   text: string;
+  /** Links from the browser extension. When not empty, the dialog shows them as a list. */
+  links: BatchLink[];
   /** Increases on every open, so the form restarts with the new text even when already open. */
   seq: number;
 }
@@ -52,7 +60,7 @@ export interface UiState {
   setView: (view: ViewName) => void;
   openAdd: (prefill?: Partial<AddPrefill>) => void;
   closeAdd: () => void;
-  openBatch: (text?: string) => void;
+  openBatch: (text?: string, links?: BatchLink[], options?: BatchOptions) => void;
   closeBatch: () => void;
   openRemove: (ids: DownloadId | DownloadId[]) => void;
   closeRemove: () => void;
@@ -80,7 +88,7 @@ export const useUi = create<UiState>()((set) => ({
   speedDialog: {open: false, id: null},
   verifyDialog: {open: false, id: null},
   addressDialog: {open: false, id: null},
-  batchDialog: {open: false, text: '', seq: 0},
+  batchDialog: {open: false, text: '', links: [], referrer: null, headers: [], seq: 0},
   afterQueue: 'none',
   countdown: null,
   clipboardUrl: null,
@@ -89,8 +97,17 @@ export const useUi = create<UiState>()((set) => ({
   openAdd: prefill =>
     set(state => ({addDialog: {open: true, seq: state.addDialog.seq + 1, ...EMPTY_PREFILL, ...prefill}})),
   closeAdd: () => set(state => ({addDialog: {...state.addDialog, open: false}})),
-  openBatch: text =>
-    set(state => ({batchDialog: {open: true, text: text ?? '', seq: state.batchDialog.seq + 1}})),
+  openBatch: (text, links, options) =>
+    set(state => ({
+      batchDialog: {
+        open: true,
+        text: text ?? '',
+        links: links ?? [],
+        referrer: options?.referrer ?? null,
+        headers: options?.headers ?? [],
+        seq: state.batchDialog.seq + 1,
+      },
+    })),
   closeBatch: () => set(state => ({batchDialog: {...state.batchDialog, open: false}})),
   openRemove: ids => set({removeDialog: {open: true, ids: Array.isArray(ids) ? ids : [ids]}}),
   closeRemove: () => set({removeDialog: {open: false, ids: []}}),

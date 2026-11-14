@@ -509,6 +509,25 @@ export const ru: Messages = {
   // Links collected from a web page.
   grabber: {
     title: 'Ссылки со страницы',
+    typeLabel: 'Тип',
+    filterAll: 'Все',
+    filterVideo: 'Видео',
+    filterAudio: 'Аудио',
+    filterArchives: 'Архивы',
+    filterDocuments: 'Документы',
+    filterPrograms: 'Программы',
+    filterImages: 'Изображения',
+    filterOther: 'Прочее',
+    search: 'Поиск по ссылкам',
+    selectAll: 'Выбрать все',
+    selectNone: 'Снять выбор',
+    selectedCount: {
+      one: 'Выбрано: {count}',
+      few: 'Выбрано: {count}',
+      many: 'Выбрано: {count}',
+      other: 'Выбрано: {count}',
+    },
+    noMatches: 'Нет ссылок по этому фильтру.',
   },
 
   // Import of a download list.

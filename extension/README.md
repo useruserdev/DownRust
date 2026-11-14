@@ -4,11 +4,32 @@ Sends browser downloads and "Download with DownRust" link requests to the DownRu
 
 The extension works only when DownRust is running with the browser bridge enabled. If DownRust does not answer, the browser downloads the file as usual.
 
-## Get the port and token
+## Automatic connection
+
+The extension asks the DownRust desktop app for its port and token through native messaging (host name `com.downrust.bridge`). It does this when the browser starts, when the extension is installed, and before a download when no token is stored. No copying is needed.
+
+The options page shows the connection state:
+
+- Connected automatically: the port and token came from DownRust. The DownRust version is shown.
+- DownRust is running, but the browser bridge is off: turn it on in DownRust, Settings, Browser.
+- Not found: DownRust did not answer. Enter the port and token by hand.
+
+To use your own port and token, turn on Set port and token manually, enter them and click Save. The automatic values are then ignored.
+
+## Get the port and token by hand
 
 1. Open DownRust, then Settings, then the Browser section.
 2. Turn the bridge on. Note the port (default 52151) and the token.
-3. Open the extension options page and enter the same port and token. Click Save, then Test connection.
+3. Open the extension options page, turn on Set port and token manually and enter the same port and token. Click Save, then Test connection.
+
+## Link grabber
+
+Right-click a page to see two items:
+
+- Download all links with DownRust: collects the links, images, videos, audio and sources of the page.
+- Download selected links with DownRust: does the same for the text you selected. It appears only when text is selected.
+
+Only `http`, `https`, `ftp`, `ftps`, `sftp` and `magnet` addresses are kept. Duplicates are removed. Each link keeps its text (up to 200 characters). A page gives at most 5000 links. DownRust opens its window with the list. Choose the links, filter them by type and search them, then add them.
 
 ## Load unpacked
 

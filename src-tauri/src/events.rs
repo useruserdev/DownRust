@@ -3,7 +3,7 @@
 use std::time::{Duration, Instant};
 
 use downrust_core::model::{DownloadKind, EngineEvent, HeaderPair, ProgressBatch};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager};
 use tokio::sync::mpsc::UnboundedReceiver;
 
@@ -18,6 +18,7 @@ pub const CLIPBOARD_URL: &str = "clipboard-url";
 pub const OPEN_ADD_DIALOG: &str = "open-add-dialog";
 pub const SETTINGS_CHANGED: &str = "settings-changed";
 pub const EXTERNAL_ADD_REQUEST: &str = "external-add-request";
+pub const EXTERNAL_BATCH_REQUEST: &str = "external-batch-request";
 
 #[derive(Clone, Serialize)]
 pub struct IdPayload {
@@ -37,6 +38,22 @@ pub struct ExternalAddPayload {
     pub referrer: Option<String>,
     pub headers: Vec<HeaderPair>,
     pub kind: Option<DownloadKind>,
+}
+
+/// One link sent by the browser extension's link grabber.
+#[derive(Clone, Serialize, Deserialize)]
+pub struct BatchLink {
+    pub url: String,
+    #[serde(default)]
+    pub text: String,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ExternalBatchPayload {
+    pub links: Vec<BatchLink>,
+    pub referrer: Option<String>,
+    pub headers: Vec<HeaderPair>,
 }
 
 #[derive(Clone, Serialize)]

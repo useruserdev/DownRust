@@ -8,6 +8,9 @@ const TEST_TIMEOUT_MS = 2000;
 const TOKEN_HEADER = "X-DownRust-Token";
 
 const enabledInput = document.getElementById("enabled");
+const manualInput = document.getElementById("manual");
+const manualFields = document.getElementById("manual-fields");
+const connectionLine = document.getElementById("connection");
 const portInput = document.getElementById("port");
 const tokenInput = document.getElementById("token");
 const saveButton = document.getElementById("save");
@@ -17,6 +20,10 @@ const firefoxSection = document.getElementById("firefox-only");
 const statusLine = document.getElementById("status");
 const testResult = document.getElementById("test-result");
 
+/** Result of the last automatic connection check, as stored by the background script. */
+let autoState = "";
+let autoVersion = "";
+
 function showStatus(message) {
   statusLine.textContent = message;
 }
@@ -24,6 +31,7 @@ function showStatus(message) {
 function readForm() {
   return {
     enabled: enabledInput.checked,
+    manual: manualInput.checked,
     port: Number.parseInt(portInput.value, 10),
     token: tokenInput.value.trim(),
   };
@@ -33,16 +41,42 @@ function isValidPort(port) {
   return Number.isInteger(port) && port >= 1 && port <= 65535;
 }
 
+function renderConnection() {
+  const manual = manualInput.checked;
+  let text;
+  if (manual) {
+    text = "Using the port and token entered below.";
+  } else if (autoState === "connected") {
+    const version = autoVersion ? ` (DownRust ${autoVersion})` : "";
+    text = `Connected automatically${version}.`;
+  } else if (autoState === "bridge-off") {
+    text = "DownRust is running, but the browser bridge is off. Turn it on in DownRust, Settings, Browser.";
+  } else {
+    text = "Not found. Enter the port and token below.";
+  }
+  connectionLine.textContent = text;
+  manualFields.hidden = !(manual || autoState !== "connected");
+}
+
 async function restore() {
   const stored = await api.storage.local.get({
     enabled: true,
+    manual: false,
     port: DEFAULT_PORT,
     token: "",
+    autoState: "",
+    autoVersion: "",
   });
   enabledInput.checked = stored.enabled !== false;
+  manualInput.checked = stored.manual === true;
   portInput.value = stored.port;
   tokenInput.value = stored.token;
+  autoState = stored.autoState;
+  autoVersion = stored.autoVersion;
+  renderConnection();
 }
+
+manualInput.addEventListener("change", renderConnection);
 
 saveButton.addEventListener("click", async () => {
   const form = readForm();
@@ -52,6 +86,7 @@ saveButton.addEventListener("click", async () => {
   }
   try {
     await api.storage.local.set(form);
+    renderConnection();
     showStatus("Saved.");
   } catch (error) {
     showStatus(`Could not save: ${error.message}`);

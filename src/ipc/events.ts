@@ -10,6 +10,7 @@ import type {
   DownloadId,
   DownloadRecord,
   ExternalAddRequest,
+  ExternalBatchRequest,
   OpenBatchPayload,
   ProgressBatch,
 } from './types';
@@ -25,6 +26,7 @@ export const EVENTS = {
   openAddDialog: 'open-add-dialog',
   openBatchDialog: 'open-batch-dialog',
   externalAddRequest: 'external-add-request',
+  externalBatchRequest: 'external-batch-request',
   settingsChanged: 'settings-changed',
   afterQueueCountdown: AFTER_QUEUE_COUNTDOWN_EVENT,
   afterQueueCancelled: AFTER_QUEUE_CANCELLED_EVENT,
@@ -40,6 +42,7 @@ export interface EventPayloads {
   'open-add-dialog': {url: string | null};
   'open-batch-dialog': OpenBatchPayload;
   'external-add-request': ExternalAddRequest;
+  'external-batch-request': ExternalBatchRequest;
   'settings-changed': AppSettings;
   'after-queue-countdown': AfterQueueCountdown;
   'after-queue-cancelled': undefined;

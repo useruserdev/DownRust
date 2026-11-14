@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "DownRust",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Send downloads to the DownRust download manager.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwBdZy+0di6fIFK5TX38M65sPQyNXb3sH8KIQS7dk7iHfbZ6F/Cp22AsIksQFg0RlQVZ87DPYcjefcBa1czSp1kTTLfFRcKnaXu1ldqfpi/sTQl0Q7evLjZbq4MB92OTMvNUOg0aebxk83BtNeffiI3kk7D0uthYxuoTVArzElle69TSRsXuSNBYQOxQpGmm06KC6BlmrW3/5QN+IhDFpiAbZBqvT1fzUiSu74qNYFqd8U5fSE1/oLy6dB5v/zUK1dmPztCQ/CL9RydLYPnUHf6lnWPtIdVk/vCTcF3Msr43tzWkKNhdolBLgLsEUkfHqmAz3JqscTd181dpyKGMwFQIDAQAB",
   "permissions": [
@@ -9,7 +9,9 @@
     "cookies",
     "storage",
     "contextMenus",
-    "webRequest"
+    "webRequest",
+    "nativeMessaging",
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
