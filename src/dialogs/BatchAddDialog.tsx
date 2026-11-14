@@ -21,7 +21,7 @@ import {api} from '../ipc/commands';
 import {inTauri} from '../ipc/runtime';
 import type {AddRequest} from '../ipc/types';
 import {findDuplicate} from '../lib/duplicates';
-import {fileNameFromLink, filterLinks, LINK_FILTERS} from '../lib/linkFilter';
+import {fileNameFromLink, filterLinks, LINK_FILTERS, defaultPicked} from '../lib/linkFilter';
 import type {LinkFilter} from '../lib/linkFilter';
 import {errorText, notify} from '../lib/notify';
 import {expandLinks} from '../lib/urlPattern';
@@ -55,6 +55,7 @@ export function BatchAddDialog() {
   const isOpen = useUi(state => state.batchDialog.open);
   const seq = useUi(state => state.batchDialog.seq);
   const closeBatch = useUi(state => state.closeBatch);
+  const listMode = useUi(state => state.batchDialog.links.length > 0);
 
   if (!isOpen) return null;
 
@@ -65,7 +66,7 @@ export function BatchAddDialog() {
         if (!open) closeBatch();
       }}
       purpose="form"
-      width={640}>
+      width={listMode ? 880 : 640}>
       <BatchForm key={seq} />
     </Dialog>
   );
@@ -83,7 +84,7 @@ function BatchForm() {
 
   const listMode = initialLinks.length > 0;
   const [text, setText] = useState(initialText);
-  const [picked, setPicked] = useState<Set<string>>(() => new Set(initialLinks.map(link => link.url)));
+  const [picked, setPicked] = useState<Set<string>>(() => defaultPicked(initialLinks));
   const [filter, setFilter] = useState<LinkFilter>('all');
   const [query, setQuery] = useState('');
   const [saveDir, setSaveDir] = useState(defaults?.defaultDir ?? '');

@@ -63,6 +63,15 @@ export function linkTypeOf(url: string): LinkType {
 }
 
 /**
+ * The links checked when the list opens: every link to a file of a known type. Links to plain
+ * pages (type `other`) start unchecked, unless the list has nothing else.
+ */
+export function defaultPicked(links: BatchLink[]): Set<string> {
+  const files = links.filter(link => linkTypeOf(link.url) !== 'other');
+  return new Set((files.length > 0 ? files : links).map(link => link.url));
+}
+
+/**
  * Keeps the links of one type whose address, text or file name contains the query.
  * The match ignores letter case. An empty query matches every link.
  */

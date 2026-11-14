@@ -4,6 +4,8 @@
 export interface NoteLine {
   text: string;
   heading: boolean;
+  /** True for an item of a bulleted or numbered list. */
+  bullet: boolean;
 }
 
 /**
@@ -18,6 +20,7 @@ export function cleanReleaseNotes(markdown: string): NoteLine[] {
     const trimmed = raw.trim();
     if (trimmed === '' || /^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) continue;
     const heading = /^#{1,6}\s+/.test(trimmed);
+    const bullet = /^([-*+]|\d+[.)])\s+/.test(trimmed);
     const text = trimmed
       .replace(/^#{1,6}\s+/, '')
       .replace(/^>\s?/, '')
@@ -32,7 +35,7 @@ export function cleanReleaseNotes(markdown: string): NoteLine[] {
       .replace(/(^|\s)_(\S.*?)_(?=\s|$)/g, '$1$2')
       .trim();
     if (text === '') continue;
-    lines.push({text, heading});
+    lines.push({text, heading, bullet});
   }
   return lines;
 }

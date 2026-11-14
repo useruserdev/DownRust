@@ -528,6 +528,10 @@ export const en = {
     licence: 'Licence (GPL-3.0)',
     magnetLabel: 'Open magnet links with DownRust',
     magnetHint: 'Sends magnet links to DownRust. Turn off to remove the link handler.',
+    tagline: 'Fast segmented download manager for Windows',
+    versionLine: 'Version {version}',
+    notChecked: 'Not checked yet in this session.',
+    foldersTitle: 'Folders',
   },
 
   // Links collected from a web page.

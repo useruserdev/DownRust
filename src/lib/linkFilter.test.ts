@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import {describe, expect, it} from 'vitest';
 import type {BatchLink} from '../ipc/types';
-import {fileNameFromLink, filterLinks, linkTypeOf} from './linkFilter';
+import {defaultPicked, fileNameFromLink, filterLinks, linkTypeOf} from './linkFilter';
 
 const LINKS: BatchLink[] = [
   {url: 'https://a.test/files/movie.MP4', text: 'Trailer'},
@@ -70,5 +70,21 @@ describe('filterLinks', () => {
   it('combines the type filter with the query', () => {
     expect(filterLinks(LINKS, 'video', 'trailer')).toHaveLength(1);
     expect(filterLinks(LINKS, 'audio', 'trailer')).toHaveLength(0);
+  });
+});
+
+describe('defaultPicked', () => {
+  it('checks file links and leaves plain pages unchecked', () => {
+    const picked = defaultPicked([
+      {url: 'https://a.test/setup.exe', text: ''},
+      {url: 'https://a.test/about', text: ''},
+      {url: 'https://a.test/clip.mp4', text: ''},
+    ]);
+    expect([...picked]).toEqual(['https://a.test/setup.exe', 'https://a.test/clip.mp4']);
+  });
+
+  it('checks everything when no link points to a known file type', () => {
+    const picked = defaultPicked([{url: 'https://a.test/about', text: ''}]);
+    expect([...picked]).toEqual(['https://a.test/about']);
   });
 });

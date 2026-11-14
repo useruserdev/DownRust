@@ -554,6 +554,10 @@ export const ru: Messages = {
     licence: 'Лицензия (GPL-3.0)',
     magnetLabel: 'Открывать magnet-ссылки в DownRust',
     magnetHint: 'Передавать magnet-ссылки в DownRust. Выключите, чтобы убрать обработчик.',
+    tagline: 'Быстрый менеджер загрузок для Windows',
+    versionLine: 'Версия {version}',
+    notChecked: 'В этот раз обновления ещё не проверялись.',
+    foldersTitle: 'Папки',
   },
 
   // Links collected from a web page.

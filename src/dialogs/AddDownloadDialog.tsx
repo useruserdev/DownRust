@@ -205,7 +205,7 @@ function AddForm() {
       expectedSha256: sha256Trimmed === '' ? null : sha256Trimmed.toLowerCase(),
       kind: siteMode ? 'site' : kind,
       options: siteMode ? (siteChoice?.options ?? null) : null,
-      mirrors: parseMirrors(mirrors).addresses,
+      mirrors: !siteMode && (kind === null || kind === 'file') ? parseMirrors(mirrors).addresses : [],
     };
     try {
       const record = await api.addDownload(request);
@@ -243,7 +243,9 @@ function AddForm() {
                 onClick={() => void paste()}
               />
             </HStack>
-            <MirrorsField value={mirrors} onChange={setMirrors} />
+            {!siteMode && (kind === null || kind === 'file') && (
+              <MirrorsField value={mirrors} onChange={setMirrors} />
+            )}
 
             {probe.status === 'checking' && <Spinner size="sm" label={t('add.checking')} />}
 
