@@ -33,6 +33,7 @@ import {t} from '../i18n';
 import {directSource, isProbeableUrl, useProbe} from './useProbe';
 import {SiteVideoPanel, type SiteChoice} from './SiteVideoPanel';
 import {isVideoSite} from '../lib/videoSites';
+import {MirrorsField, parseMirrors} from './MirrorsField';
 
 const TARGET_DELAY_MS = 300;
 const SHA256_PATTERN = /^[0-9a-fA-F]{64}$/;
@@ -87,6 +88,7 @@ function AddForm() {
   const [findVideo, setFindVideo] = useState(false);
   const [siteChoice, setSiteChoice] = useState<SiteChoice | null>(null);
   const siteMode = prefill.kind === 'site' || findVideo || isVideoSite(url);
+  const [mirrors, setMirrors] = useState('');
   const userPickedDir = useRef(false);
   const probe = useProbe(siteMode ? '' : url, prefill.headers);
 
@@ -135,7 +137,10 @@ function AddForm() {
   const sha256Trimmed = sha256.trim();
   const sha256Valid = sha256Trimmed === '' || SHA256_PATTERN.test(sha256Trimmed);
   const canSubmit =
-    (isProbeableUrl(url) || directSource(url) !== null) && sha256Valid && (!siteMode || siteChoice !== null);
+    (isProbeableUrl(url) || directSource(url) !== null) &&
+    sha256Valid &&
+    (!siteMode || siteChoice !== null) &&
+    parseMirrors(mirrors).valid;
   const info = probe.status === 'ok' ? probe.info : null;
   const category = info?.category ?? categoryForFileName(fileName || url);
   const totalSize = info?.totalSize;
@@ -200,6 +205,7 @@ function AddForm() {
       expectedSha256: sha256Trimmed === '' ? null : sha256Trimmed.toLowerCase(),
       kind: siteMode ? 'site' : kind,
       options: siteMode ? (siteChoice?.options ?? null) : null,
+      mirrors: parseMirrors(mirrors).addresses,
     };
     try {
       const record = await api.addDownload(request);
@@ -237,6 +243,7 @@ function AddForm() {
                 onClick={() => void paste()}
               />
             </HStack>
+            <MirrorsField value={mirrors} onChange={setMirrors} />
 
             {probe.status === 'checking' && <Spinner size="sm" label={t('add.checking')} />}
 

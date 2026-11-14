@@ -69,4 +69,5 @@ export const api = {
   siteInfo: (url: string, headers: HeaderPair[]) => call<SiteInfo>('site_info', {url, headers}),
   siteToolStatus: () => call<SiteToolStatus | null>('site_tool_status'),
   siteToolUpdate: () => call<SiteToolStatus>('site_tool_update'),
+  importDownloadList: (path: string) => call<string[]>('import_download_list', {path}),
 };

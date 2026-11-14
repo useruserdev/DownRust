@@ -78,7 +78,7 @@ function defaultSettings(): AppSettings {
       media: {ffmpegPath: '', convertToMp4: true, quality: 'best'},
       site: {ytdlpPath: '', toolsDir: '', autoDownload: true, autoUpdate: true, defaultFormat: 'best'},
       torrent: {listenPort: 0, enableDht: true, enableUpnp: true, seedAfterFinish: false, uploadLimit: null},
-      speedSchedule: {},
+      speedSchedule: {enabled: false, rules: []},
       autoChecksum: true,
     },
     theme: 'system',
@@ -621,6 +621,8 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
       const status: SiteToolStatus = {path: 'C:\\Users\\Public\\AppData\\Roaming\\DownRust\\tools\\yt-dlp.exe', version: '2026.01.01'};
       return status;
     }
+    case 'import_download_list':
+      return [] as string[];
     case 'get_app_info': {
       const info: AppInfo = {
         version: '0.1.0',

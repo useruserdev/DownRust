@@ -552,15 +552,37 @@ export const en = {
   // Import of a download list.
   importList: {
     title: 'Import list',
+    none: 'No download addresses found in this file',
+    filterIdm: 'IDM export',
+    filterText: 'Text file',
+    filterWeb: 'Web page',
+    filterAll: 'All files',
   },
 
   // Mirrors of one file.
   mirrors: {
     title: 'Mirrors',
+    label: 'Addresses of the same file, one per line',
+    hint: 'Each address must serve the same file: same size, and ranges supported. Other addresses are skipped.',
+    invalid: 'Each line must be an http or https address.',
+    autoChecksum: 'Check files against published SHA-256 automatically',
+    autoChecksumHint: 'Looks for a .sha256 file or a SHA256SUMS file next to the download and checks the result.',
   },
 
   // Speed limits by time of day.
   speedSchedule: {
     title: 'Speed schedule',
+    enable: 'Use speed schedule',
+    enableHint: 'Each rule sets a speed limit for its days and hours. Without a matching rule, the total limit applies.',
+    days: 'Days',
+    start: 'From',
+    end: 'To',
+    limit: 'Speed limit',
+    noLimit: 'No limit',
+    unitKb: 'KB/s',
+    unitMb: 'MB/s',
+    addRule: 'Add rule',
+    removeRule: 'Remove rule',
+    empty: 'No rules yet.',
   },
 } as const;

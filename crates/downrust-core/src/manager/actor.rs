@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Manager actor: one task owns the scheduling state and handles every command in arrival order.
+use std::cell::Cell;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 use std::time::Duration;
 
+use chrono::{Local, NaiveDateTime};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::oneshot;
 use tokio::time::MissedTickBehavior;
@@ -26,6 +28,8 @@ pub(super) struct ManagerActor {
     pub(super) events: UnboundedSender<EngineEvent>,
     pub(super) self_tx: UnboundedSender<Cmd>,
     pub(super) global_limiter: Arc<RateLimiter>,
+    /// The rate last given to `global_limiter` by the speed schedule check.
+    pub(super) applied_rate: Cell<Option<u64>>,
     pub(super) active: HashMap<DownloadId, ActiveTask>,
     /// Downloads waiting for their task to end before removal; the value says whether to delete the file.
     pub(super) removing: HashMap<DownloadId, bool>,
@@ -56,6 +60,7 @@ impl ManagerActor {
             events,
             self_tx,
             global_limiter,
+            applied_rate: Cell::new(None),
             active: HashMap::new(),
             removing: HashMap::new(),
             restarting: HashSet::new(),
@@ -88,7 +93,10 @@ impl ManagerActor {
                     None => break,
                 },
                 _ = tick.tick() => self.emit_progress(),
-                _ = window.tick() => self.schedule(),
+                _ = window.tick() => {
+                    self.schedule();
+                    self.apply_speed_limit();
+                }
             }
         }
     }
@@ -267,13 +275,30 @@ impl ManagerActor {
     }
 
     pub(super) fn update_settings(&mut self, settings: EngineSettings) -> Result<()> {
-        let settings = settings.sanitized();
+        let mut settings = settings.sanitized();
+        settings.speed_schedule = settings.speed_schedule.sanitized();
         let client = build_client(&settings)?;
-        self.global_limiter
-            .set_rate(settings.global_speed_limit.unwrap_or(0));
         self.shared.replace_settings(settings, client);
+        self.apply_speed_limit();
         self.schedule();
         Ok(())
+    }
+
+    /// Sets the global limiter to the limit of the current time. The rate changes only when it differs.
+    pub(super) fn apply_speed_limit(&self) {
+        self.apply_speed_limit_at(Local::now().naive_local());
+    }
+
+    pub(super) fn apply_speed_limit_at(&self, now: NaiveDateTime) {
+        let settings = self.shared.settings();
+        let rate = settings
+            .speed_schedule
+            .limit_at(settings.global_speed_limit, now)
+            .unwrap_or(0);
+        if self.applied_rate.get() != Some(rate) {
+            self.global_limiter.set_rate(rate);
+            self.applied_rate.set(Some(rate));
+        }
     }
 }
 
@@ -348,6 +373,30 @@ mod tests {
         actor.resume(record.id).expect("resume");
         let after = store.get_download(record.id).expect("read").expect("row");
         assert_eq!(after.status, DownloadStatus::Completed);
+    }
+
+    #[tokio::test]
+    async fn speed_schedule_updates_the_global_limiter_at_each_check() {
+        let (mut actor, _store) = test_actor();
+        let limiter = Arc::clone(&actor.global_limiter);
+        let settings: EngineSettings = serde_json::from_value(serde_json::json!({
+            "speedSchedule": {
+                "enabled": true,
+                "rules": [{
+                    "days": [0, 1, 2, 3, 4, 5, 6],
+                    "start": "10:00",
+                    "end": "11:00",
+                    "limit": 4096
+                }]
+            }
+        }))
+        .expect("settings");
+        actor.update_settings(settings).expect("update");
+        let day = chrono::NaiveDate::from_ymd_opt(2026, 11, 16).expect("date");
+        actor.apply_speed_limit_at(day.and_hms_opt(10, 30, 0).expect("time"));
+        assert_eq!(limiter.rate(), 4096);
+        actor.apply_speed_limit_at(day.and_hms_opt(12, 0, 0).expect("time"));
+        assert_eq!(limiter.rate(), 0);
     }
 
     #[tokio::test]
