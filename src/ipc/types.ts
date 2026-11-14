@@ -165,8 +165,15 @@ export interface EngineSettings {
 export interface SiteSettings {}
 
 /** Settings for torrent downloads. */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface TorrentSettings {}
+export interface TorrentSettings {
+  /** Port for incoming peers. 0 lets the system pick a free port. */
+  listenPort: number;
+  enableDht: boolean;
+  enableUpnp: boolean;
+  seedAfterFinish: boolean;
+  /** Upload limit in bytes per second. null means unlimited. */
+  uploadLimit: number | null;
+}
 
 /** Speed limits that change with the time of day. */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

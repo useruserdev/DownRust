@@ -29,6 +29,7 @@ base64 = { workspace = true }
 futures-util = { workspace = true }
 aes = { workspace = true }
 cbc = { workspace = true }
+librqbit = { version = "9.1.0", default-features = false, features = ["rust-tls"] }
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.61", features = [

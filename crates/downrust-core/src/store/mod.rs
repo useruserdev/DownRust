@@ -88,6 +88,11 @@ impl Store {
         downloads::record_finished_file(&mut self.lock(), id, file_name, total)
     }
 
+    /// Sets file_name and total_size of a torrent once its name is known.
+    pub fn set_name_and_size(&self, id: DownloadId, file_name: &str, total: u64) -> Result<()> {
+        downloads::set_name_and_size(&self.lock(), id, file_name, total)
+    }
+
     /// Stores the virus scan result. `None` clears it.
     pub fn set_scan_state(&self, id: DownloadId, state: Option<ScanState>) -> Result<()> {
         downloads::set_scan_state(&self.lock(), id, state)

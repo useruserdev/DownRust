@@ -494,6 +494,17 @@ export const ru: Messages = {
   // Torrents.
   torrent: {
     title: 'Торрент',
+    restartHint: 'Порт, DHT и UPnP применяются после перезапуска программы.',
+    listenPort: 'Порт для входящих подключений',
+    enableDht: 'Искать пиров через DHT',
+    enableDhtHint: 'Находит пиров без трекера.',
+    enableUpnp: 'Открывать порт через UPnP',
+    seedAfterFinish: 'Раздавать после окончания загрузки',
+    seedAfterFinishHint: 'Раздача останавливается при закрытии программы.',
+    limitUpload: 'Ограничить скорость отдачи',
+    uploadSpeed: 'Скорость отдачи',
+    openFile: 'Открыть торрент-файл…',
+    fileFilter: 'Торрент-файлы',
   },
 
   // FTP and SFTP.

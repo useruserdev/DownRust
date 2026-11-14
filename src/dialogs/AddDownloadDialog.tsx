@@ -30,14 +30,16 @@ import {useDownloads} from '../state/downloads';
 import {useSettings} from '../state/settings';
 import {useUi} from '../state/ui';
 import {t} from '../i18n';
-import {isProbeableUrl, useProbe} from './useProbe';
+import {directSource, isProbeableUrl, useProbe} from './useProbe';
 
 const TARGET_DELAY_MS = 300;
 const SHA256_PATTERN = /^[0-9a-fA-F]{64}$/;
 const FALLBACK_CONNECTIONS = 8;
 
-/** Playlist addresses: a .m3u8 is an HLS stream, a .mpd is a DASH manifest. */
+/** Playlist addresses: a .m3u8 is an HLS stream, a .mpd is a DASH manifest. Magnets and .torrent files are torrents. */
 function kindFromUrl(url: string): DownloadKind | null {
+  const direct = directSource(url);
+  if (direct !== null) return direct.kind;
   const path = url.trim().split(/[?#]/)[0].toLowerCase();
   if (path.endsWith('.m3u8')) return 'hls';
   if (path.endsWith('.mpd')) return 'dash';
@@ -98,9 +100,10 @@ function AddForm() {
     });
   }, [prefill.url]);
 
-  // A successful probe supplies the file name.
+  // A successful probe supplies the file name. A direct source (magnet, .torrent, FTP) takes its name from the address.
   useEffect(() => {
     if (probe.status === 'ok') setFileName(probe.info.fileName);
+    if (probe.status === 'direct') setFileName(probe.fileName);
   }, [probe]);
 
   // The save folder follows the file name until the user picks a folder.
@@ -121,7 +124,7 @@ function AddForm() {
   const kind: DownloadKind | null = prefill.kind ?? kindFromUrl(url);
   const sha256Trimmed = sha256.trim();
   const sha256Valid = sha256Trimmed === '' || SHA256_PATTERN.test(sha256Trimmed);
-  const canSubmit = isProbeableUrl(url) && sha256Valid;
+  const canSubmit = (isProbeableUrl(url) || directSource(url) !== null) && sha256Valid;
   const info = probe.status === 'ok' ? probe.info : null;
   const category = info?.category ?? categoryForFileName(fileName || url);
   const totalSize = info?.totalSize;
@@ -225,7 +228,7 @@ function AddForm() {
 
             {probe.status === 'checking' && <Spinner size="sm" label={t('add.checking')} />}
 
-            {kind !== null && (
+            {(kind === 'hls' || kind === 'dash') && (
               <Badge
                 variant="info"
                 label={t('add.videoStream', {format: t(kind === 'hls' ? 'kind.hls' : 'kind.dash')})}

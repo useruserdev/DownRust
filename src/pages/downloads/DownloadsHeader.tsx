@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import {open as pickFile} from '@tauri-apps/plugin-dialog';
 import {Button} from '@astryxdesign/core/Button';
 import {DropdownMenu} from '@astryxdesign/core/DropdownMenu';
 import {HStack, LayoutHeader, StackItem} from '@astryxdesign/core/Layout';
@@ -10,7 +11,24 @@ import {useDownloads} from '../../state/downloads';
 import {useStatusCounts} from '../../state/selectors';
 import {useUi} from '../../state/ui';
 import {t} from '../../i18n';
+import {inTauri} from '../../ipc/runtime';
+import {errorText, notify} from '../../lib/notify';
 import {downloadActions} from './RowContextMenu';
+
+/** Picks a .torrent file and opens the Add dialog with it as the address. */
+async function openTorrentFile() {
+  if (!inTauri) return;
+  try {
+    const picked = await pickFile({
+      multiple: false,
+      directory: false,
+      filters: [{name: t('torrent.fileFilter'), extensions: ['torrent']}],
+    });
+    if (typeof picked === 'string') useUi.getState().openAdd({url: picked, kind: 'torrent'});
+  } catch (err) {
+    notify('error', errorText(err));
+  }
+}
 
 /** Page header: title, live counts, search and the actions for the selected download. */
 export function DownloadsHeader() {
@@ -78,6 +96,7 @@ export function DownloadsHeader() {
           button={{label: t('common.more'), variant: 'ghost', size: 'sm'}}
           items={[
             {label: t('menu.addSeveral'), onClick: () => useUi.getState().openBatch()},
+            {label: t('torrent.openFile'), onClick: () => void openTorrentFile()},
             {label: t('menu.pauseAll'), onClick: () => void downloadActions.pauseAll()},
             {label: t('menu.resumeAll'), onClick: () => void downloadActions.resumeAll()},
           ]}

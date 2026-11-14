@@ -468,6 +468,17 @@ export const en = {
   // Torrents.
   torrent: {
     title: 'Torrent',
+    restartHint: 'The port, DHT and UPnP settings apply after the app restarts.',
+    listenPort: 'Listening port',
+    enableDht: 'Find peers with DHT',
+    enableDhtHint: 'Finds peers without a tracker.',
+    enableUpnp: 'Open the port with UPnP',
+    seedAfterFinish: 'Keep sharing after the download finishes',
+    seedAfterFinishHint: 'Sharing stops when the app closes.',
+    limitUpload: 'Limit upload speed',
+    uploadSpeed: 'Upload speed',
+    openFile: 'Open torrent file…',
+    fileFilter: 'Torrent files',
   },
 
   // FTP and SFTP.
