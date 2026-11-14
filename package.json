@@ -15,7 +15,9 @@
     "theme:build": "astryx theme build src/themes/downrust/downrustTheme.ts && node scripts/theme-header.mjs",
     "tauri": "tauri",
     "extension:lint": "web-ext lint --source-dir extension",
-    "extension:build": "web-ext build --source-dir extension --artifacts-dir dist-extension --overwrite-dest --filename downrust-{version}.xpi"
+    "extension:build": "web-ext build --source-dir extension --artifacts-dir dist-extension --overwrite-dest --filename downrust-{version}.xpi",
+    "extension:zip": "web-ext build --source-dir extension --artifacts-dir dist-extension --overwrite-dest --filename downrust-chrome-{version}.zip",
+    "extension:sign": "web-ext sign --channel unlisted --source-dir extension --artifacts-dir dist-extension"
   },
   "dependencies": {
     "@astryxdesign/core": "0.7.15",

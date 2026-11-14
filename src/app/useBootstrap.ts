@@ -25,6 +25,9 @@ export function useBootstrap(): void {
       onEvent('open-add-dialog', ({url}) => useUi.getState().openAdd({url: url ?? ''})),
       onEvent('open-batch-dialog', ({text}) => useUi.getState().openBatch(text)),
       onEvent('external-add-request', request => useUi.getState().openAdd(request)),
+      onEvent('external-batch-request', request =>
+        useUi.getState().openBatch(undefined, request.links, {referrer: request.referrer, headers: request.headers}),
+      ),
       onEvent('settings-changed', settings => useSettings.getState().applyRemote(settings)),
       onEvent('after-queue-countdown', countdown => useUi.getState().setCountdown(countdown)),
       onEvent('after-queue-cancelled', () => {

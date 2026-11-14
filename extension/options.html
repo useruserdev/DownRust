@@ -11,7 +11,10 @@
 <body>
   <main>
     <h1>DownRust</h1>
-    <p class="hint">Enter the port and token from DownRust Settings, Browser section.</p>
+
+    <section>
+      <p id="connection" class="connection" aria-live="polite"></p>
+    </section>
 
     <section>
       <label class="check">
@@ -19,15 +22,24 @@
         Send downloads to DownRust
       </label>
 
-      <label class="field">
-        <span>Port</span>
-        <input type="number" id="port" min="1" max="65535" step="1" inputmode="numeric">
+      <label class="check">
+        <input type="checkbox" id="manual">
+        Set port and token manually
       </label>
 
-      <label class="field">
-        <span>Token</span>
-        <input type="text" id="token" autocomplete="off" spellcheck="false">
-      </label>
+      <div id="manual-fields" hidden>
+        <p class="hint">Enter the port and token from DownRust Settings, Browser section.</p>
+
+        <label class="field">
+          <span>Port</span>
+          <input type="number" id="port" min="1" max="65535" step="1" inputmode="numeric">
+        </label>
+
+        <label class="field">
+          <span>Token</span>
+          <input type="text" id="token" autocomplete="off" spellcheck="false">
+        </label>
+      </div>
 
       <div class="buttons">
         <button type="button" id="save">Save</button>

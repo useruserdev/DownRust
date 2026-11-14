@@ -245,3 +245,16 @@ export interface ExternalAddRequest {
   headers: HeaderPair[];
   kind?: DownloadKind | null;
 }
+
+/** One link collected by the browser extension's link grabber. */
+export interface BatchLink {
+  url: string;
+  text: string;
+}
+
+/** Payload of the `external-batch-request` event: links sent by the browser extension. */
+export interface ExternalBatchRequest {
+  links: BatchLink[];
+  referrer: string | null;
+  headers: HeaderPair[];
+}
