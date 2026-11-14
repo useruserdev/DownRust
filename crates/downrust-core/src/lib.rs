@@ -9,6 +9,12 @@ pub mod media {
     //! ffmpeg lookup for HLS and DASH downloads.
     pub use crate::engine::media::ffmpeg::{detect_ffmpeg, FfmpegInfo};
 }
+pub mod site {
+    //! yt-dlp helpers for video sites.
+    pub use crate::engine::site::{
+        ensure_tool, find_tool, site_info, tool_version, update_tool, SiteInfo,
+    };
+}
 pub mod model;
 pub mod secrets;
 pub mod settings;

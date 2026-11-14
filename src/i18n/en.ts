@@ -463,6 +463,24 @@ export const en = {
   // Video sites (yt-dlp).
   site: {
     title: 'Video site',
+    loading: 'Reading the page',
+    findVideo: 'Find video on this page',
+    quality: 'Quality',
+    best: 'Best',
+    audioOnly: 'Audio only',
+    site: 'Site',
+    duration: 'Duration',
+    readFailed: 'Could not read this page: {error}',
+    settingsTitle: 'yt-dlp',
+    ytdlpPath: 'yt-dlp path',
+    ytdlpPlaceholder: 'Find automatically',
+    notFound: 'yt-dlp was not found.',
+    found: 'Version {version}',
+    download: 'Download yt-dlp',
+    update: 'Update yt-dlp',
+    autoDownload: 'Download yt-dlp when it is missing',
+    autoUpdate: 'Check for updates once a week',
+    defaultFormat: 'Default quality',
   },
 
   // Torrents.

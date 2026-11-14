@@ -24,7 +24,7 @@ pub use network::{
 };
 pub use scan::{ScanSettings, DEFAULT_SCAN_ARGS};
 pub use schedule::{in_window, is_open_now, Schedule};
-pub use site::SiteSettings;
+pub use site::{SiteFormat, SiteSettings};
 pub use speed_schedule::SpeedSchedule;
 pub use torrent::TorrentSettings;
 

@@ -14,6 +14,8 @@ import type {
   HeaderPair,
   ProbeInfo,
   QueueMove,
+  SiteInfo,
+  SiteToolStatus,
   TargetSuggestion,
   UpdateInfo,
 } from './types';
@@ -64,4 +66,7 @@ export const api = {
   installUpdate: () => call<null>('install_update'),
   openLink: (url: string) => call<null>('open_link', {url}),
   setMagnetHandler: (enabled: boolean) => call<null>('set_magnet_handler', {enabled}),
+  siteInfo: (url: string, headers: HeaderPair[]) => call<SiteInfo>('site_info', {url, headers}),
+  siteToolStatus: () => call<SiteToolStatus | null>('site_tool_status'),
+  siteToolUpdate: () => call<SiteToolStatus>('site_tool_update'),
 };

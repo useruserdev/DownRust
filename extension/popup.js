@@ -7,6 +7,51 @@ const PING_TIMEOUT_MS = 800;
 const TOKEN_HEADER = "X-DownRust-Token";
 const KIND_LABELS = { hls: "HLS", dash: "DASH" };
 
+// Video sites that yt-dlp can download. Same list as src/lib/videoSites.ts.
+const VIDEO_SITE_RULES = [
+  { host: "youtube.com", paths: [] },
+  { host: "youtu.be", paths: [] },
+  { host: "youtube-nocookie.com", paths: [] },
+  { host: "vimeo.com", paths: [] },
+  { host: "dailymotion.com", paths: [] },
+  { host: "twitch.tv", paths: [] },
+  { host: "tiktok.com", paths: [] },
+  { host: "vk.com", paths: ["video", "clip"] },
+  { host: "vkvideo.ru", paths: [] },
+  { host: "rutube.ru", paths: [] },
+  { host: "ok.ru", paths: ["/video"] },
+  { host: "dzen.ru", paths: ["/video"] },
+  { host: "x.com", paths: ["/status/"] },
+  { host: "twitter.com", paths: ["/status/"] },
+  { host: "instagram.com", paths: ["/p/", "/reel"] },
+  { host: "facebook.com", paths: ["/watch", "/videos/"] },
+  { host: "fb.watch", paths: [] },
+  { host: "reddit.com", paths: ["/comments/"] },
+  { host: "bilibili.com", paths: [] },
+  { host: "soundcloud.com", paths: [] },
+  { host: "bandcamp.com", paths: [] },
+  { host: "coub.com", paths: [] },
+  { host: "streamable.com", paths: [] },
+];
+
+/** True when the address is an http or https page of a listed video site. */
+function isVideoSite(text) {
+  let url;
+  try {
+    url = new URL(text);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+  const host = url.hostname.toLowerCase();
+  const path = url.pathname.toLowerCase();
+  return VIDEO_SITE_RULES.some(
+    (rule) =>
+      (host === rule.host || host.endsWith("." + rule.host)) &&
+      (rule.paths.length === 0 || rule.paths.some((part) => path.includes(part))),
+  );
+}
+
 const statusLine = document.getElementById("status");
 const list = document.getElementById("list");
 const empty = document.getElementById("empty");
@@ -144,6 +189,13 @@ async function init() {
   if (!tab || tab.id === undefined) {
     renderStreams([]);
     return;
+  }
+  if (tab.url && isVideoSite(tab.url)) {
+    const pageButton = document.getElementById("page");
+    pageButton.hidden = false;
+    pageButton.addEventListener("click", () =>
+      sendStream({ url: tab.url, kind: "site", title: tab.title, pageUrl: tab.url }, pageButton),
+    );
   }
   renderStreams(await streamsForTab(tab.id));
 }

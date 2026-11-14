@@ -7,4 +7,5 @@ pub mod files;
 pub mod media;
 pub mod queue;
 pub mod settings;
+pub mod site;
 pub mod stats;

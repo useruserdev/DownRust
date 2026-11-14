@@ -16,6 +16,8 @@ import type {
   ProgressItem,
   QueueMove,
   SegmentView,
+  SiteInfo,
+  SiteToolStatus,
 } from './types';
 
 const MIB = 1024 * 1024;
@@ -74,7 +76,7 @@ function defaultSettings(): AppSettings {
       siteLogins: [],
       scan: {enabled: false, program: '', args: '-Scan -ScanType 3 -File "{file}" -DisableRemediation'},
       media: {ffmpegPath: '', convertToMp4: true, quality: 'best'},
-      site: {},
+      site: {ytdlpPath: '', toolsDir: '', autoDownload: true, autoUpdate: true, defaultFormat: 'best'},
       torrent: {listenPort: 0, enableDht: true, enableUpnp: true, seedAfterFinish: false, uploadLimit: null},
       speedSchedule: {},
       autoChecksum: true,
@@ -600,6 +602,25 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
     case 'open_link':
     case 'set_magnet_handler':
       return null;
+    case 'site_info': {
+      const title = 'Browser preview video';
+      const info: SiteInfo = {
+        title,
+        durationSecs: 120,
+        thumbnail: null,
+        site: 'Preview',
+        heights: [1080, 720, 480],
+        hasAudio: true,
+        fileName: `${title}.mp4`,
+      };
+      return info;
+    }
+    case 'site_tool_status':
+      return null;
+    case 'site_tool_update': {
+      const status: SiteToolStatus = {path: 'C:\\Users\\Public\\AppData\\Roaming\\DownRust\\tools\\yt-dlp.exe', version: '2026.01.01'};
+      return status;
+    }
     case 'get_app_info': {
       const info: AppInfo = {
         version: '0.1.0',

@@ -31,6 +31,8 @@ import {useSettings} from '../state/settings';
 import {useUi} from '../state/ui';
 import {t} from '../i18n';
 import {directSource, isProbeableUrl, useProbe} from './useProbe';
+import {SiteVideoPanel, type SiteChoice} from './SiteVideoPanel';
+import {isVideoSite} from '../lib/videoSites';
 
 const TARGET_DELAY_MS = 300;
 const SHA256_PATTERN = /^[0-9a-fA-F]{64}$/;
@@ -82,8 +84,11 @@ function AddForm() {
   const [saveDir, setSaveDir] = useState(defaults?.defaultDir ?? '');
   const [connections, setConnections] = useState(defaults?.defaultConnections ?? FALLBACK_CONNECTIONS);
   const [sha256, setSha256] = useState('');
+  const [findVideo, setFindVideo] = useState(false);
+  const [siteChoice, setSiteChoice] = useState<SiteChoice | null>(null);
+  const siteMode = prefill.kind === 'site' || findVideo || isVideoSite(url);
   const userPickedDir = useRef(false);
-  const probe = useProbe(url, prefill.headers);
+  const probe = useProbe(siteMode ? '' : url, prefill.headers);
 
   // An empty open takes the address from the clipboard when it holds a link. The address is
   // selected, so typing replaces it instead of adding to it.
@@ -106,6 +111,11 @@ function AddForm() {
     if (probe.status === 'direct') setFileName(probe.fileName);
   }, [probe]);
 
+  // A video page takes its file name from the chosen quality.
+  useEffect(() => {
+    if (siteChoice !== null) setFileName(siteChoice.fileName);
+  }, [siteChoice]);
+
   // The save folder follows the file name until the user picks a folder.
   useEffect(() => {
     const name = fileName.trim();
@@ -124,7 +134,8 @@ function AddForm() {
   const kind: DownloadKind | null = prefill.kind ?? kindFromUrl(url);
   const sha256Trimmed = sha256.trim();
   const sha256Valid = sha256Trimmed === '' || SHA256_PATTERN.test(sha256Trimmed);
-  const canSubmit = (isProbeableUrl(url) || directSource(url) !== null) && sha256Valid;
+  const canSubmit =
+    (isProbeableUrl(url) || directSource(url) !== null) && sha256Valid && (!siteMode || siteChoice !== null);
   const info = probe.status === 'ok' ? probe.info : null;
   const category = info?.category ?? categoryForFileName(fileName || url);
   const totalSize = info?.totalSize;
@@ -187,7 +198,8 @@ function AddForm() {
       headers: prefill.headers,
       probe: info,
       expectedSha256: sha256Trimmed === '' ? null : sha256Trimmed.toLowerCase(),
-      kind,
+      kind: siteMode ? 'site' : kind,
+      options: siteMode ? (siteChoice?.options ?? null) : null,
     };
     try {
       const record = await api.addDownload(request);
@@ -233,6 +245,13 @@ function AddForm() {
                 variant="info"
                 label={t('add.videoStream', {format: t(kind === 'hls' ? 'kind.hls' : 'kind.dash')})}
               />
+            )}
+
+            {siteMode && (
+              <SiteVideoPanel key={url.trim()} url={url.trim()} headers={prefill.headers} onChange={setSiteChoice} />
+            )}
+            {!siteMode && probe.status === 'ok' && probe.info.contentType?.includes('text/html') && (
+              <Button label={t('site.findVideo')} variant="secondary" clickAction={() => setFindVideo(true)} />
             )}
 
             {info && (
