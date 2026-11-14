@@ -6,11 +6,40 @@ import {Heading, Text} from '@astryxdesign/core/Text';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {Icon} from '@astryxdesign/core/Icon';
 import {Search} from 'lucide-react';
+import {open as pickFile} from '@tauri-apps/plugin-dialog';
+import {errorText, notify} from '../../lib/notify';
+import {api} from '../../ipc/commands';
+import {inTauri} from '../../ipc/runtime';
 import {useDownloads} from '../../state/downloads';
 import {useStatusCounts} from '../../state/selectors';
 import {useUi} from '../../state/ui';
 import {t} from '../../i18n';
 import {downloadActions} from './RowContextMenu';
+
+/** Picks a list file, reads its addresses and opens the batch dialog with them. */
+async function importList(): Promise<void> {
+  if (!inTauri) return;
+  try {
+    const picked = await pickFile({
+      multiple: false,
+      filters: [
+        {name: t('importList.filterIdm'), extensions: ['ief']},
+        {name: t('importList.filterText'), extensions: ['txt']},
+        {name: t('importList.filterWeb'), extensions: ['html', 'htm']},
+        {name: t('importList.filterAll'), extensions: ['*']},
+      ],
+    });
+    if (typeof picked !== 'string') return;
+    const urls = await api.importDownloadList(picked);
+    if (urls.length === 0) {
+      notify('info', t('importList.none'));
+      return;
+    }
+    useUi.getState().openBatch(urls.join('\n'));
+  } catch (err) {
+    notify('error', errorText(err));
+  }
+}
 
 /** Page header: title, live counts, search and the actions for the selected download. */
 export function DownloadsHeader() {
@@ -78,6 +107,7 @@ export function DownloadsHeader() {
           button={{label: t('common.more'), variant: 'ghost', size: 'sm'}}
           items={[
             {label: t('menu.addSeveral'), onClick: () => useUi.getState().openBatch()},
+            {label: `${t('importList.title')}…`, onClick: () => void importList()},
             {label: t('menu.pauseAll'), onClick: () => void downloadActions.pauseAll()},
             {label: t('menu.resumeAll'), onClick: () => void downloadActions.resumeAll()},
           ]}

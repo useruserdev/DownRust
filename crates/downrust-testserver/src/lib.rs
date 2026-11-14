@@ -16,7 +16,7 @@ mod state;
 
 pub use content::{etag, fill, full_content, last_modified};
 pub use error::{Error, Result};
-pub use handlers::{file_url, FileOpts, DEMO_AUTHORIZATION};
+pub use handlers::{file_url, named_file_sha256, FileOpts, DEMO_AUTHORIZATION, NAMED_FILE_SIZE};
 pub use hls::{
     enc_segment_plain, hls_variant_bytes, HLS_BYTE_RANGE_BYTES, HLS_ENC_SEGMENTS, HLS_KEY,
     HLS_SEGMENTS,

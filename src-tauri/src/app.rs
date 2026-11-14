@@ -69,6 +69,7 @@ pub fn run() {
             // Browser link grabber.
 
             // Import, mirrors and speed schedule.
+            crate::commands::import::import_download_list,
         ])
         .run(tauri::generate_context!())
         .expect("DownRust failed to start");

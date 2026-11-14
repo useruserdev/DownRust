@@ -12,7 +12,7 @@ use tokio_util::sync::CancellationToken;
 use super::retry::RetryPolicy;
 use super::segments::{SegmentSlot, SegmentTable, UNKNOWN_END};
 use super::task::TaskContext;
-use super::worker::{run_worker, WorkerContext, WorkerExit};
+use super::worker::{run_worker, AddressPool, WorkerContext, WorkerExit};
 use super::writer::WriteCmd;
 use crate::error::{Error, Result};
 use crate::model::{HeaderPair, SegmentRow};
@@ -22,7 +22,8 @@ const RESOURCE_CHANGED: &str = "the file on the server changed";
 
 /// Settings of the transfer that the workers share.
 pub(crate) struct Job {
-    pub url: String,
+    /// The main address and the verified mirrors.
+    pub addresses: Arc<AddressPool>,
     pub headers: Vec<HeaderPair>,
     /// Error text used when the server answers `401 Unauthorized`.
     pub unauthorized: String,
@@ -197,7 +198,7 @@ fn worker_context(
     WorkerContext {
         slot,
         client: ctx.client.clone(),
-        url: job.url.clone(),
+        addresses: Arc::clone(&job.addresses),
         headers: job.headers.clone(),
         unauthorized: job.unauthorized.clone(),
         use_range: job.use_range,

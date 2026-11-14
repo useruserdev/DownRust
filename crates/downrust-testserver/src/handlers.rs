@@ -10,9 +10,10 @@ use axum::response::IntoResponse;
 use serde::Deserialize;
 
 use crate::body::{file_body, BodyPlan};
-use crate::content::{etag, last_modified};
+use crate::content::{etag, full_content, last_modified};
 use crate::range::{evaluate, if_range_matches, Requested};
 use crate::state::ServerState;
+use sha2::{Digest, Sha256};
 
 /// Options for a file URL built by [`file_url`]. The default is a range-capable file with a known length, an ETag and no pacing.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -259,6 +260,39 @@ fn pct_encode(input: &str, keep: fn(u8) -> bool) -> String {
         }
     }
     out
+}
+
+/// Size of the files served under `/files/{name}`.
+pub const NAMED_FILE_SIZE: u64 = 256 * 1024;
+
+/// Hex SHA-256 of the content of every `/files/{name}` file.
+pub fn named_file_sha256() -> String {
+    format!("{:x}", Sha256::digest(full_content(1, NAMED_FILE_SIZE)))
+}
+
+/// Files for the checksum tests under `/files/{name}`. All have the same content.
+/// `side-*` names have a `.sha256` sidecar with the right hash, `bad-*` names a wrong one.
+/// `sums-known.bin` is listed in `/files/SHA256SUMS`, and `none-*` names have no checksum.
+pub(crate) async fn named_file(Path(path): Path<String>) -> Response<Body> {
+    if path == "SHA256SUMS" {
+        let body = format!(
+            "{}  sums-known.bin\n{}  other.bin\n",
+            named_file_sha256(),
+            "0".repeat(64)
+        );
+        return (StatusCode::OK, body).into_response();
+    }
+    if let Some(base) = path.strip_suffix(".sha256") {
+        let hash = if base.starts_with("side-") {
+            named_file_sha256()
+        } else if base.starts_with("bad-") {
+            "0".repeat(64)
+        } else {
+            return StatusCode::NOT_FOUND.into_response();
+        };
+        return (StatusCode::OK, format!("{hash}\n")).into_response();
+    }
+    (StatusCode::OK, full_content(1, NAMED_FILE_SIZE)).into_response()
 }
 
 #[cfg(test)]

@@ -104,6 +104,8 @@ export interface AddRequest {
   expectedSha256?: string | null;
   /** Omitted or null: the kind is detected from the address and the response type. */
   kind?: DownloadKind | null;
+  /** Other addresses of the same file. */
+  mirrors?: string[];
 }
 
 export interface SegmentView {
@@ -170,7 +172,21 @@ export interface TorrentSettings {}
 
 /** Speed limits that change with the time of day. */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SpeedSchedule {}
+export interface SpeedSchedule {
+  enabled: boolean;
+  rules: SpeedRule[];
+}
+
+/** A time window with its own speed limit. Days run Monday (0) to Sunday (6). */
+export interface SpeedRule {
+  days: number[];
+  /** Local time as "HH:MM". */
+  start: string;
+  /** Local time as "HH:MM". An end before the start runs over midnight. */
+  end: string;
+  /** Bytes per second. Null means no limit. */
+  limit: number | null;
+}
 
 export interface ProxyRule {
   host: string;

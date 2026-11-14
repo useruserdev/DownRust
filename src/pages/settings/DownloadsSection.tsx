@@ -186,6 +186,16 @@ export function DownloadsSection({settings, update}: SectionProps) {
         </VStack>
       </Collapsible>
 
+      <Switch
+        label={t('mirrors.autoChecksum')}
+        description={t('mirrors.autoChecksumHint')}
+        value={engine.autoChecksum}
+        onChange={value => update({engine: {autoChecksum: value}})}
+        labelPosition="start"
+        labelSpacing="spread"
+        width="100%"
+      />
+
       <Text type="supporting" color="secondary">
         {t('settings.downloads.changesNote')}
       </Text>

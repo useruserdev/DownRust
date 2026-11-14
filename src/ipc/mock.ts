@@ -75,7 +75,7 @@ function defaultSettings(): AppSettings {
       media: {ffmpegPath: '', convertToMp4: true, quality: 'best'},
       site: {},
       torrent: {},
-      speedSchedule: {},
+      speedSchedule: {enabled: false, rules: []},
       autoChecksum: true,
     },
     theme: 'system',
@@ -582,6 +582,8 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
     }
     case 'detect_ffmpeg':
       return null;
+    case 'import_download_list':
+      return [] as string[];
     case 'get_app_info': {
       const info: AppInfo = {
         version: '0.1.0',

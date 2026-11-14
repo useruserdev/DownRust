@@ -10,12 +10,13 @@ use super::plan::{decide, TransferPlan};
 use super::retry::RetryPolicy;
 use super::segments::SegmentTable;
 use super::task::TaskContext;
+use super::worker::AddressPool;
 use super::writer::{spawn_writer, WriterHandle};
 use crate::auth::{login_for, request_host, unauthorized_message, with_site_login};
 use crate::error::{Error, Result};
 use crate::http::classify::{classify_status, StatusClass};
 use crate::http::probe::probe;
-use crate::model::{EngineEvent, HeaderPair, Phase, ProbeInfo};
+use crate::model::{DownloadRecord, EngineEvent, HeaderPair, Phase, ProbeInfo};
 use crate::settings::EngineSettings;
 
 /// How one attempt ended, when it did not fail.
@@ -53,6 +54,7 @@ pub(crate) async fn run_attempt(ctx: &TaskContext, force_single: bool) -> Result
     if let Some(note) = &plan.note {
         tracing::warn!(id = ctx.id, "{note}");
     }
+    let mirrors = verified_mirrors(ctx, &prev, &probed).await;
     ctx.store.update_meta(ctx.id, &probed)?;
     if plan.fresh {
         ctx.store.clear_progress(ctx.id)?;
@@ -75,7 +77,7 @@ pub(crate) async fn run_attempt(ctx: &TaskContext, force_single: bool) -> Result
     let writer = spawn_writer(file, Arc::clone(&table));
     ctx.live.set_phase(Phase::Downloading);
     let headers = with_site_login(&ctx.settings, &probed.final_url, &prev.request_headers());
-    let job = build_job(ctx, &probed, headers, segmented, &writer, &table);
+    let job = build_job(ctx, &probed, headers, segmented, mirrors, &writer, &table);
     let end = run_coordinator(ctx, job).await;
     if segmented && matches!(end, CoordEnd::Failed(_) | CoordEnd::Cancelled) {
         if let Err(err) = checkpoint(ctx, &writer.tx).await {
@@ -105,17 +107,66 @@ pub(crate) async fn run_attempt(ctx: &TaskContext, force_single: bool) -> Result
     }
 }
 
+/// Keeps the mirrors whose file matches the main file: the same size, the same ETag when both have
+/// one, and support for ranges. Other mirrors are logged and dropped.
+async fn verified_mirrors(
+    ctx: &TaskContext,
+    prev: &DownloadRecord,
+    main: &ProbeInfo,
+) -> Vec<String> {
+    let timeout =
+        Duration::from_secs(ctx.settings.connect_timeout_secs + ctx.settings.read_timeout_secs);
+    let mut kept: Vec<String> = Vec::new();
+    for address in &prev.mirrors {
+        if !is_http_address(address) {
+            tracing::warn!(id = ctx.id, mirror = %address, "mirror dropped: not an http(s) address");
+            continue;
+        }
+        let headers = with_site_login(&ctx.settings, address, &prev.request_headers());
+        let info = match probe(&ctx.client, address, &headers, timeout).await {
+            Ok(info) => info,
+            Err(err) => {
+                tracing::warn!(id = ctx.id, mirror = %address, error = %err, "mirror dropped: probe failed");
+                continue;
+            }
+        };
+        let same_size = main.total_size.is_some() && info.total_size == main.total_size;
+        let same_etag = match (&main.etag, &info.etag) {
+            (Some(a), Some(b)) => a == b,
+            _ => true,
+        };
+        if !same_size || !same_etag || !info.resumable {
+            tracing::warn!(
+                id = ctx.id,
+                mirror = %address,
+                "mirror dropped: size, ETag or range support differs"
+            );
+            continue;
+        }
+        if info.final_url != main.final_url && !kept.contains(&info.final_url) {
+            kept.push(info.final_url);
+        }
+    }
+    kept
+}
+
+fn is_http_address(address: &str) -> bool {
+    let lower = address.to_ascii_lowercase();
+    lower.starts_with("http://") || lower.starts_with("https://")
+}
+
 fn build_job(
     ctx: &TaskContext,
     probed: &ProbeInfo,
     headers: Vec<HeaderPair>,
     segmented: bool,
+    mirrors: Vec<String>,
     writer: &WriterHandle,
     table: &Arc<SegmentTable>,
 ) -> Job {
     let has_login = login_for(&ctx.settings, &probed.final_url).is_some();
     Job {
-        url: probed.final_url.clone(),
+        addresses: Arc::new(AddressPool::new(probed.final_url.clone(), mirrors)),
         headers,
         unauthorized: unauthorized_message(has_login, &request_host(&probed.final_url)),
         segmented,

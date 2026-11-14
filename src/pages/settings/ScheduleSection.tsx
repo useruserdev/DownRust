@@ -9,6 +9,7 @@ import type {AppSettings, Schedule} from '../../ipc/types';
 import type {SettingsPatch} from '../../state/settings';
 import {minuteToTime, scheduleSummary, timeToMinute, WEEKDAY_NAMES, dayLabel} from '../../lib/schedule';
 import {t} from '../../i18n';
+import {SpeedScheduleCard} from './SpeedScheduleCard';
 
 interface SectionProps {
   settings: AppSettings;
@@ -85,6 +86,8 @@ export function ScheduleSection({settings, update}: SectionProps) {
       <Text type="supporting" color="secondary">
         {scheduleSummary(schedule)}
       </Text>
+
+      <SpeedScheduleCard settings={settings} update={update} />
     </VStack>
   );
 }

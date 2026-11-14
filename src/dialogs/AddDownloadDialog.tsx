@@ -31,6 +31,7 @@ import {useSettings} from '../state/settings';
 import {useUi} from '../state/ui';
 import {t} from '../i18n';
 import {isProbeableUrl, useProbe} from './useProbe';
+import {MirrorsField, parseMirrors} from './MirrorsField';
 
 const TARGET_DELAY_MS = 300;
 const SHA256_PATTERN = /^[0-9a-fA-F]{64}$/;
@@ -80,6 +81,7 @@ function AddForm() {
   const [saveDir, setSaveDir] = useState(defaults?.defaultDir ?? '');
   const [connections, setConnections] = useState(defaults?.defaultConnections ?? FALLBACK_CONNECTIONS);
   const [sha256, setSha256] = useState('');
+  const [mirrors, setMirrors] = useState('');
   const userPickedDir = useRef(false);
   const probe = useProbe(url, prefill.headers);
 
@@ -121,7 +123,7 @@ function AddForm() {
   const kind: DownloadKind | null = prefill.kind ?? kindFromUrl(url);
   const sha256Trimmed = sha256.trim();
   const sha256Valid = sha256Trimmed === '' || SHA256_PATTERN.test(sha256Trimmed);
-  const canSubmit = isProbeableUrl(url) && sha256Valid;
+  const canSubmit = isProbeableUrl(url) && sha256Valid && parseMirrors(mirrors).valid;
   const info = probe.status === 'ok' ? probe.info : null;
   const category = info?.category ?? categoryForFileName(fileName || url);
   const totalSize = info?.totalSize;
@@ -185,6 +187,7 @@ function AddForm() {
       probe: info,
       expectedSha256: sha256Trimmed === '' ? null : sha256Trimmed.toLowerCase(),
       kind,
+      mirrors: parseMirrors(mirrors).addresses,
     };
     try {
       const record = await api.addDownload(request);
@@ -222,6 +225,7 @@ function AddForm() {
                 onClick={() => void paste()}
               />
             </HStack>
+            <MirrorsField value={mirrors} onChange={setMirrors} />
 
             {probe.status === 'checking' && <Spinner size="sm" label={t('add.checking')} />}
 

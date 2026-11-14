@@ -64,13 +64,13 @@ fn check_reply(response: &Response, use_range: bool, pos: u64) -> Option<Attempt
 }
 
 /// Sends one request for the bytes from `pos` up to `end` and streams the reply.
-pub(crate) async fn fetch_once(ctx: &WorkerContext, pos: u64, end: u64) -> Attempt {
+pub(crate) async fn fetch_once(ctx: &WorkerContext, url: &str, pos: u64, end: u64) -> Attempt {
     let range = ctx
         .use_range
         .then(|| (pos, (end != UNKNOWN_END).then(|| end - 1)));
     let request = get_request(
         &ctx.client,
-        &ctx.url,
+        url,
         &ctx.headers,
         range,
         ctx.if_range.as_deref(),

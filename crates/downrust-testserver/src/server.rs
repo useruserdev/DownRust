@@ -9,7 +9,7 @@ use axum::Router;
 use tokio::sync::oneshot;
 
 use crate::error::{Error, Result};
-use crate::handlers::{auth_file, file, redirect};
+use crate::handlers::{auth_file, file, named_file, redirect};
 use crate::hls::hls;
 use crate::state::ServerState;
 
@@ -76,6 +76,7 @@ pub(crate) fn router(state: Arc<ServerState>) -> Router {
         .route("/auth/file/{size}", get(auth_file))
         .route("/redirect", get(redirect))
         .route("/hls/{*path}", get(hls))
+        .route("/files/{*path}", get(named_file))
         .with_state(state)
 }
 
