@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "DownRust",
+  "version": "0.1.0",
+  "description": "Send downloads to the DownRust download manager.",
+  "permissions": ["downloads", "cookies", "storage", "contextMenus", "webRequest"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "DownRust",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "icons/32.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
+  "icons": {
+    "32": "icons/32.png",
+    "128": "icons/128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "downrust@downrust.local",
+      "strict_min_version": "121.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}

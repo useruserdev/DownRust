@@ -1,0 +1,135 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+
+:root {
+  --bg: #ffffff;
+  --text: #1d1f23;
+  --muted: #5d6470;
+  --line: #dfe2e8;
+  --accent: #f26a2e;
+  --accent-text: #ffffff;
+  --button-bg: #f5f6f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1d22;
+    --text: #eceef2;
+    --muted: #9aa2ae;
+    --line: #353a44;
+    --accent: #f26a2e;
+    --accent-text: #ffffff;
+    --button-bg: #262a32;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1b1d22;
+  --text: #eceef2;
+  --muted: #9aa2ae;
+  --line: #353a44;
+  --accent: #f26a2e;
+  --accent-text: #ffffff;
+  --button-bg: #262a32;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  width: 340px;
+  min-height: 60px;
+}
+
+main {
+  padding: 12px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.item:first-child {
+  border-top: none;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.kind {
+  display: inline-block;
+  margin-right: 4px;
+  padding: 0 4px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.download {
+  flex: none;
+  padding: 5px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.download:hover {
+  filter: brightness(1.08);
+}
+
+.download:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

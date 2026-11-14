@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DownRust settings</title>
+  <link rel="stylesheet" href="options.css">
+  <script src="options.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>DownRust</h1>
+    <p class="hint">Enter the port and token from DownRust Settings, Browser section.</p>
+
+    <section>
+      <label class="check">
+        <input type="checkbox" id="enabled">
+        Send downloads to DownRust
+      </label>
+
+      <label class="field">
+        <span>Port</span>
+        <input type="number" id="port" min="1" max="65535" step="1" inputmode="numeric">
+      </label>
+
+      <label class="field">
+        <span>Token</span>
+        <input type="text" id="token" autocomplete="off" spellcheck="false">
+      </label>
+
+      <div class="buttons">
+        <button type="button" id="save">Save</button>
+        <button type="button" id="test">Test connection</button>
+      </div>
+
+      <p id="test-result" class="result" aria-live="polite"></p>
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="firefox-only" hidden>
+      <p class="hint">Firefox asks for access to websites before the extension can read cookies and contact DownRust.</p>
+      <button type="button" id="grant">Grant access to all sites</button>
+    </section>
+  </main>
+</body>
+</html>
