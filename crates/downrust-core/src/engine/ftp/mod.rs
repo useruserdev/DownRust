@@ -2,7 +2,7 @@
 //! Downloads over FTP, FTPS and SFTP. Each attempt opens one connection, resumes from the part
 //! file and retries connection errors. A failed login stops at once.
 mod address;
-mod ftp;
+mod plain;
 mod pump;
 mod sftp;
 
@@ -112,7 +112,7 @@ async fn attempt(ctx: &TaskContext, address: &Address, login: &Login) -> Step<Ta
     ctx.live.set_phase(Phase::Connecting);
     let size = match address.protocol {
         Protocol::Sftp => sftp::download(ctx, &prev, address, login).await?,
-        Protocol::Ftp | Protocol::Ftps => ftp::download(ctx, &prev, address, login).await?,
+        Protocol::Ftp | Protocol::Ftps => plain::download(ctx, &prev, address, login).await?,
     };
     finish(ctx, &prev, size).await?;
     Ok(TaskOutcome::Completed)

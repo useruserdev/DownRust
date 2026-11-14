@@ -1,7 +1,7 @@
 {
   "name": "downrust",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Segmented download manager for the desktop",
   "license": "GPL-3.0-or-later",
   "author": "DownRust contributors",

@@ -1693,7 +1693,7 @@ checksum = "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2"
 
 [[package]]
 name = "downrust"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "axum",
  "downrust-core",
@@ -1726,7 +1726,7 @@ dependencies = [
 
 [[package]]
 name = "downrust-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "aes 0.8.4",
  "async-trait",
@@ -1763,7 +1763,7 @@ dependencies = [
 
 [[package]]
 name = "downrust-testserver"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "aes 0.8.4",
  "axum",
@@ -1771,7 +1771,7 @@ dependencies = [
  "cbc 0.1.2",
  "futures-util",
  "serde",
- "sha2",
+ "sha2 0.10.9",
  "thiserror 2.0.21",
  "tokio",
 ]

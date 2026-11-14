@@ -194,7 +194,8 @@ mod tests {
     #[test]
     fn unknown_scheme_and_missing_host_are_rejected() {
         assert!(Address::parse("gopher://h.example/a").is_err());
-        assert!(Address::parse("ftp:///a").is_err());
+        assert!(Address::parse("ftp://").is_err());
+        assert!(Address::parse("sftp:///a").is_err());
     }
 
     #[test]

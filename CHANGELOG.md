@@ -2,6 +2,39 @@
 
 All notable changes to DownRust are listed here. The newest version is first.
 
+## 0.2.0 (2026-11-14)
+
+### Video sites
+
+- Videos from YouTube, VK, Rutube, Twitch, TikTok, Vimeo and other sites, with a choice of quality or audio only. DownRust uses yt-dlp, downloads it when it is missing and updates it every week.
+- "Find video on this page" for other pages, and a "Download video from this page" button in the browser extension.
+
+### New protocols
+
+- Torrents: magnet links, `.torrent` addresses and local `.torrent` files, with progress, speed and peers.
+- FTP, FTPS and SFTP, with resume from the same byte and speed limits.
+
+### Downloads
+
+- Mirrors: one file from several servers at the same time. A mirror with a different size is ignored.
+- Speed schedule: different speed limits for hours and days.
+- Automatic SHA-256 check when the server publishes a `.sha256` file or a `SHA256SUMS` list.
+- Import of a download list from an IDM export file (`.ief`), a text file or a web page.
+
+### Browser
+
+- The extension connects to DownRust by itself. You no longer copy the port and the token.
+- "Download all links with DownRust" and "Download selected links" on a page, with filters by file type.
+
+### App
+
+- Updates inside the app: Settings → About shows the new version and its changes, and installs it with one click.
+- Links to the GitHub repository, all releases and problem reports in Settings → About.
+- Download progress on the Windows taskbar button.
+- Jump list tasks: New download, Pause all and Resume all.
+- Command line: `DownRust.exe add <address>`, `--new`, `--pause-all`, `--resume-all`, and `downrust://` links.
+- Optional handling of `magnet:` links.
+
 ## 0.1.0 — first release (2026-11-14)
 
 First public version of DownRust for Windows.

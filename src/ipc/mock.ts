@@ -589,7 +589,7 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
       return null;
     case 'check_update': {
       const info: UpdateInfo = {
-        currentVersion: '0.1.0',
+        currentVersion: '0.2.0',
         available: false,
         version: null,
         notes: null,
@@ -625,7 +625,7 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
       return [] as string[];
     case 'get_app_info': {
       const info: AppInfo = {
-        version: '0.1.0',
+        version: '0.2.0',
         dataDir: 'C:\\Users\\Public\\AppData\\Roaming\\DownRust',
         logDir: 'C:\\Users\\Public\\AppData\\Roaming\\DownRust\\logs',
         portable: false,

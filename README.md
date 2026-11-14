@@ -42,9 +42,14 @@
 - SHA-256 verification of finished files.
 - Refresh of an expired link without losing the download.
 - Sparse files and optional disk space reservation before the download starts.
+- Mirrors: one file from several servers at the same time.
+- Speed schedule with different limits for hours and days.
+- Automatic SHA-256 check against a published `.sha256` file or `SHA256SUMS` list.
+- Torrents (magnet links and `.torrent` files), FTP, FTPS and SFTP.
 
 **Video**
 
+- Videos from YouTube, VK, Rutube, Twitch, TikTok, Vimeo and many other sites, with a choice of quality, through yt-dlp. DownRust downloads yt-dlp when needed and keeps it up to date.
 - HLS streams, including AES-128 encrypted streams, with a choice of quality.
 - DASH streams and separate audio tracks, merged with ffmpeg.
 
@@ -52,7 +57,9 @@
 
 - Browser extension for Chrome, Edge, Firefox and Zen.
 - Capture of browser downloads and a "Download with DownRust" context menu.
-- Detection of HLS and DASH streams on the page.
+- Detection of HLS and DASH streams on the page, and a button for video pages.
+- "Download all links with DownRust" with filters by file type.
+- Automatic connection to the app, without copying the port and the token.
 
 **Network**
 
@@ -68,6 +75,9 @@
 - Statistics for downloads.
 - Optional scan of finished files with Windows Security.
 - Start with Windows, single instance and portable mode.
+- Updates inside the app with release notes (Settings → About).
+- Progress on the taskbar button, jump list tasks, a command line and `downrust://` links.
+- Import of a download list from IDM (`.ief`), a text file or a web page.
 - English and Russian interface, with light and dark themes.
 
 ## Screenshots
@@ -97,14 +107,16 @@ To run DownRust from a folder, for example from a USB drive:
 
 The extension sends downloads to DownRust. It works only while DownRust runs with the browser bridge enabled. If DownRust does not answer, the browser downloads the file as usual.
 
-1. In DownRust, open **Settings**, then **Browser**. Turn on the bridge and note the port (default `52151`) and the token.
+1. In DownRust, open **Settings**, then **Browser**, and turn on the bridge. The extension finds the port and the token by itself while DownRust is installed; you can also enter them by hand.
 2. Install the extension:
    - **Chrome and Edge:** open `chrome://extensions` or `edge://extensions`, turn on **Developer mode**, choose **Load unpacked** and select the `extension` folder of this repository.
    - **Firefox:** open `about:debugging#/runtime/this-firefox` and choose **Load Temporary Add-on**. Select `manifest.json`. Firefox removes this add-on on restart.
    - **Zen and other Firefox-based browsers:** build the package with `npm run extension:build`. Set `xpinstall.signatures.required` to `false` in `about:config`. Then open `about:addons`, choose **Install Add-on From File** and select `dist-extension/downrust-<version>.xpi`.
-3. Open the extension options, enter the port and the token, click **Save** and then **Test connection**.
+3. Open the extension options. They show **Connected automatically** when the extension found DownRust. Otherwise turn on **Set port and token manually**, enter them, click **Save** and then **Test connection**.
 
 ## Video downloads
+
+Paste the address of a video page (for example a YouTube video) in the Add dialog, choose the quality and start. DownRust uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) for video sites and downloads it on first use.
 
 HLS streams download without extra tools. ffmpeg is needed for MP4 conversion, for DASH streams and for HLS streams with a separate audio track.
 
