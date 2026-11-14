@@ -14,6 +14,8 @@ import type {
   HeaderPair,
   ProbeInfo,
   QueueMove,
+  SiteInfo,
+  SiteToolStatus,
   TargetSuggestion,
 } from './types';
 
@@ -59,4 +61,7 @@ export const api = {
   getAfterQueueAction: () => call<AfterQueueAction>('get_after_queue_action'),
   cancelAfterQueue: () => call<null>('cancel_after_queue'),
   detectFfmpeg: () => call<FfmpegInfo | null>('detect_ffmpeg'),
+  siteInfo: (url: string, headers: HeaderPair[]) => call<SiteInfo>('site_info', {url, headers}),
+  siteToolStatus: () => call<SiteToolStatus | null>('site_tool_status'),
+  siteToolUpdate: () => call<SiteToolStatus>('site_tool_update'),
 };

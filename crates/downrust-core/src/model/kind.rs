@@ -67,6 +67,9 @@ impl DownloadKind {
             "ftp" | "ftps" | "sftp" => return Some(Self::Ftp),
             _ => {}
         }
+        if crate::util::video_sites::is_video_site(trimmed) {
+            return Some(Self::Site);
+        }
         let path = trimmed.split(['?', '#']).next().unwrap_or_default();
         let lower = path.to_ascii_lowercase();
         if lower.ends_with(".torrent") {
@@ -130,6 +133,10 @@ mod tests {
         assert_eq!(
             DownloadKind::from_url("sftp://user@host/file"),
             Some(DownloadKind::Ftp)
+        );
+        assert_eq!(
+            DownloadKind::from_url("https://www.youtube.com/watch?v=abc"),
+            Some(DownloadKind::Site)
         );
         assert!(DownloadKind::Torrent.is_external());
         assert!(!DownloadKind::Hls.is_external());

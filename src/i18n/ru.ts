@@ -489,6 +489,24 @@ export const ru: Messages = {
   // Video sites (yt-dlp).
   site: {
     title: 'Сайт с видео',
+    loading: 'Читаю страницу',
+    findVideo: 'Найти видео на этой странице',
+    quality: 'Качество',
+    best: 'Лучшее',
+    audioOnly: 'Только звук',
+    site: 'Сайт',
+    duration: 'Длительность',
+    readFailed: 'Не удалось прочитать страницу: {error}',
+    settingsTitle: 'yt-dlp',
+    ytdlpPath: 'Путь к yt-dlp',
+    ytdlpPlaceholder: 'Найти автоматически',
+    notFound: 'yt-dlp не найден.',
+    found: 'Версия {version}',
+    download: 'Скачать yt-dlp',
+    update: 'Обновить yt-dlp',
+    autoDownload: 'Скачивать yt-dlp, если его нет',
+    autoUpdate: 'Проверять обновления раз в неделю',
+    defaultFormat: 'Качество по умолчанию',
   },
 
   // Torrents.

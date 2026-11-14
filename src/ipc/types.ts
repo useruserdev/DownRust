@@ -104,6 +104,8 @@ export interface AddRequest {
   expectedSha256?: string | null;
   /** Omitted or null: the kind is detected from the address and the response type. */
   kind?: DownloadKind | null;
+  /** Options of the download kind as JSON text, for example `{"format":"1080"}` for a video site. */
+  options?: string | null;
 }
 
 export interface SegmentView {
@@ -160,9 +162,38 @@ export interface EngineSettings {
   autoChecksum: boolean;
 }
 
+/** Quality of a video site download. `audio` saves only the sound track. */
+export type SiteFormat = 'best' | '2160' | '1440' | '1080' | '720' | '480' | 'audio';
+
 /** Settings for video sites downloaded with yt-dlp. */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SiteSettings {}
+export interface SiteSettings {
+  /** Empty means: look in the tools folder, next to the program, then in PATH. */
+  ytdlpPath: string;
+  /** Folder of the downloaded yt-dlp program. The app fills it at each start. */
+  toolsDir: string;
+  autoDownload: boolean;
+  autoUpdate: boolean;
+  defaultFormat: SiteFormat;
+}
+
+/** Details of a video page read with yt-dlp. */
+export interface SiteInfo {
+  title: string;
+  durationSecs: number | null;
+  thumbnail: string | null;
+  site: string;
+  /** Distinct video heights, highest first. */
+  heights: number[];
+  hasAudio: boolean;
+  /** Sanitized title with the `.mp4` extension. */
+  fileName: string;
+}
+
+/** The yt-dlp program in use and its version. */
+export interface SiteToolStatus {
+  path: string;
+  version: string;
+}
 
 /** Settings for torrent downloads. */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

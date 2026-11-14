@@ -61,7 +61,9 @@ pub fn run() {
             crate::dropzone::show_main,
             crate::dropzone::handle_dropped_links,
             // Video sites.
-
+            crate::commands::site::site_info,
+            crate::commands::site::site_tool_status,
+            crate::commands::site::site_tool_update,
             // Torrents and FTP.
 
             // Updates, About and the command line.

@@ -7,3 +7,4 @@ pub mod digest;
 pub mod filename;
 pub mod time;
 pub mod url_detect;
+pub mod video_sites;

@@ -17,7 +17,10 @@ pub fn init(app: &mut tauri::App) -> AppResult<()> {
     let paths = AppPaths::resolve(&handle)?;
     logging::init(&paths.log_dir)?;
     let store = Store::open(&paths.db_path)?;
-    let settings = AppSettings::load_or_default(&store, &paths.downloads_dir)?;
+    let mut settings = AppSettings::load_or_default(&store, &paths.downloads_dir)?;
+    let tools_dir = paths.data_dir.join("tools");
+    std::fs::create_dir_all(&tools_dir)?;
+    settings.engine.site.tools_dir = tools_dir.to_string_lossy().into_owned();
 
     let (tx, rx) = mpsc::unbounded_channel();
     let manager = tauri::async_runtime::block_on(DownloadManager::start(
