@@ -7,6 +7,10 @@ use crate::secrets;
 use crate::settings::{route_for, EngineSettings, Route, SiteFormat};
 
 /// Progress line printed for every update. Values can be `NA`.
+/// Format order for merged files: the highest resolution first, and at the same resolution
+/// H.264 video and AAC audio, which every player opens inside an MP4 file.
+const COMPATIBLE_SORT: &str = "res,fps,vcodec:h264,acodec:m4a";
+
 pub(crate) const PROGRESS_TEMPLATE: &str = "download:DRP %(progress.downloaded_bytes)s %(progress.total_bytes)s %(progress.total_bytes_estimate)s %(progress.speed)s";
 
 /// The proxy address for a page, when the proxy rules send it through the proxy. The proxy
@@ -113,6 +117,8 @@ pub(crate) fn download_args(
             ffmpeg.to_string_lossy().into_owned(),
             "--merge-output-format".to_owned(),
             "mp4".to_owned(),
+            "-S".to_owned(),
+            COMPATIBLE_SORT.to_owned(),
         ]);
     }
     args.extend(request.iter().cloned());
@@ -188,6 +194,7 @@ mod tests {
         assert!(args
             .windows(2)
             .any(|pair| pair == ["--merge-output-format", "mp4"]));
+        assert!(args.windows(2).any(|pair| pair == ["-S", COMPATIBLE_SORT]));
         assert!(args.iter().any(|arg| arg == PROGRESS_TEMPLATE));
         assert_eq!(args.last().map(String::as_str), Some("https://youtu.be/x"));
     }
