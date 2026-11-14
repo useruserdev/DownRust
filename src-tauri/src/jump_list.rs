@@ -3,14 +3,15 @@
 use windows::{
     core::{Interface, HSTRING},
     Win32::{
+        Storage::EnhancedStorage::PKEY_Title,
         System::Com::{
-            CoCreateInstance, CoInitializeEx, CoUninitialize, CLSCTX_INPROC_SERVER,
-            COINIT_APARTMENTTHREADED,
+            CoCreateInstance, CoInitializeEx, CoUninitialize, StructuredStorage::PROPVARIANT,
+            CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED,
         },
         UI::Shell::{
-            DestinationList, EnumerableObjectCollection, ICustomDestinationList, IObjectCollection,
-            IShellLinkW,
-            PropertiesSystem::{IPropertyStore, InitPropVariantFromString, PKEY_Title},
+            Common::{IObjectArray, IObjectCollection},
+            DestinationList, EnumerableObjectCollection, ICustomDestinationList, IShellLinkW,
+            PropertiesSystem::IPropertyStore,
             ShellLink,
         },
     },
@@ -57,7 +58,7 @@ fn write_list(lang: Lang, exe: &str) -> windows::core::Result<()> {
         let list: ICustomDestinationList =
             CoCreateInstance(&DestinationList, None, CLSCTX_INPROC_SERVER)?;
         let mut max_slots = 0u32;
-        let _removed: windows::Win32::UI::Shell::IObjectArray = list.BeginList(&mut max_slots)?;
+        let _removed: IObjectArray = list.BeginList(&mut max_slots)?;
         let collection: IObjectCollection =
             CoCreateInstance(&EnumerableObjectCollection, None, CLSCTX_INPROC_SERVER)?;
         for (argument, title) in tasks(lang) {
@@ -66,7 +67,7 @@ fn write_list(lang: Lang, exe: &str) -> windows::core::Result<()> {
             link.SetArguments(&HSTRING::from(argument))?;
             link.SetIconLocation(&HSTRING::from(exe), 0)?;
             let store: IPropertyStore = link.cast()?;
-            let value = InitPropVariantFromString(&HSTRING::from(title))?;
+            let value = PROPVARIANT::from(title);
             store.SetValue(&PKEY_Title, &value)?;
             store.Commit()?;
             collection.AddObject(&link)?;
