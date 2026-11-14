@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[package]
+name = "downrust-testserver"
+description = "Local HTTP server for DownRust tests"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license = "GPL-3.0-or-later"
+authors = ["DownRust contributors"]
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "downrust-testserver"
+path = "src/main.rs"
+
+[dependencies]
+axum = { workspace = true }
+tokio = { workspace = true }
+futures-util = { workspace = true }
+bytes = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+aes = { workspace = true }
+cbc = { workspace = true }
