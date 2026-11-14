@@ -29,6 +29,10 @@ base64 = { workspace = true }
 futures-util = { workspace = true }
 aes = { workspace = true }
 cbc = { workspace = true }
+russh = { version = "0.65.1", default-features = false, features = ["ring"] }
+russh-sftp = "3.0.1"
+suppaftp = { version = "12.2.1", default-features = false, features = ["tokio-rustls-ring", "rustls-ring"] }
+rustls-native-certs = "0.8.5"
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.61", features = [
@@ -39,6 +43,10 @@ windows-sys = { version = "0.61", features = [
 ] }
 
 [dev-dependencies]
+async-trait = "0.1.92"
 downrust-testserver = { path = "../downrust-testserver" }
+libunftp = "0.25.0"
 tempfile = { workspace = true }
 tokio = { workspace = true, features = ["test-util"] }
+unftp-core = "0.1.1"
+unftp-sbe-fs = "0.4.1"
