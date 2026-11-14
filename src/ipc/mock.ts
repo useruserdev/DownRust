@@ -5,6 +5,7 @@ import {categoryForFileName} from '../lib/categories';
 import type {
   AddRequest,
   AppInfo,
+  UpdateInfo,
   AppSettings,
   ChecksumReport,
   DownloadId,
@@ -90,6 +91,8 @@ function defaultSettings(): AppSettings {
     browserToken: randomToken(),
     showDropZone: false,
     dropZonePosition: null,
+    checkUpdates: true,
+    handleMagnetLinks: false,
   };
 }
 
@@ -581,6 +584,21 @@ export async function mockInvoke(command: string, args?: Record<string, unknown>
       return clone(settings);
     }
     case 'detect_ffmpeg':
+      return null;
+    case 'check_update': {
+      const info: UpdateInfo = {
+        currentVersion: '0.1.0',
+        available: false,
+        version: null,
+        notes: null,
+        date: null,
+        source: 'updater',
+      };
+      return info;
+    }
+    case 'install_update':
+    case 'open_link':
+    case 'set_magnet_handler':
       return null;
     case 'get_app_info': {
       const info: AppInfo = {

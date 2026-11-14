@@ -478,6 +478,27 @@ export const en = {
   // Updates and the About page.
   update: {
     title: 'Updates',
+    checking: 'Checking for updates...',
+    check: 'Check for updates',
+    checkFailed: 'Could not check for updates. Try again later.',
+    upToDate: 'DownRust is up to date.',
+    current: 'You have version {version}.',
+    newVersion: 'Version {version} is available.',
+    released: 'Released {date}',
+    notesTitle: 'What is new',
+    install: 'Install and restart',
+    installing: 'Downloading the update...',
+    openPage: 'Open download page',
+    auto: 'Check for updates automatically',
+    autoHint: 'Checks once a day and tells you when a new version is ready.',
+    available: 'DownRust {version} is available. Open Settings → About.',
+    linksTitle: 'Links',
+    github: 'DownRust on GitHub',
+    releases: 'All releases',
+    report: 'Report a problem',
+    licence: 'Licence (GPL-3.0)',
+    magnetLabel: 'Open magnet links with DownRust',
+    magnetHint: 'Sends magnet links to DownRust. Turn off to remove the link handler.',
   },
 
   // Links collected from a web page.

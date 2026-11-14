@@ -504,6 +504,27 @@ export const ru: Messages = {
   // Updates and the About page.
   update: {
     title: 'Обновления',
+    checking: 'Проверяем обновления...',
+    check: 'Проверить обновления',
+    checkFailed: 'Не удалось проверить обновления. Попробуйте позже.',
+    upToDate: 'Установлена последняя версия DownRust.',
+    current: 'У вас версия {version}.',
+    newVersion: 'Доступна версия {version}.',
+    released: 'Выпущена {date}',
+    notesTitle: 'Что нового',
+    install: 'Установить и перезапустить',
+    installing: 'Загружаем обновление...',
+    openPage: 'Открыть страницу загрузки',
+    auto: 'Проверять обновления автоматически',
+    autoHint: 'Проверка раз в сутки. Сообщит, когда будет готова новая версия.',
+    available: 'Доступна DownRust {version}. Откройте Настройки → О программе.',
+    linksTitle: 'Ссылки',
+    github: 'DownRust на GitHub',
+    releases: 'Все выпуски',
+    report: 'Сообщить о проблеме',
+    licence: 'Лицензия (GPL-3.0)',
+    magnetLabel: 'Открывать magnet-ссылки в DownRust',
+    magnetHint: 'Передавать magnet-ссылки в DownRust. Выключите, чтобы убрать обработчик.',
   },
 
   // Links collected from a web page.

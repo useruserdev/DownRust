@@ -224,6 +224,24 @@ export interface AppSettings {
   browserToken: string;
   showDropZone: boolean;
   dropZonePosition: [number, number] | null;
+  checkUpdates: boolean;
+  handleMagnetLinks: boolean;
+}
+
+/** Result of an update check. `source` is `github` when the GitHub release was read instead. */
+export interface UpdateInfo {
+  currentVersion: string;
+  available: boolean;
+  version: string | null;
+  notes: string | null;
+  date: string | null;
+  source: 'updater' | 'github';
+}
+
+/** Payload of the `update-progress` event while the update downloads. */
+export interface UpdateProgress {
+  downloaded: number;
+  total: number | null;
 }
 
 /** Payload of the `open-batch-dialog` event: the dropped links, one per line. */

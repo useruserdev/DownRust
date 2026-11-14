@@ -44,6 +44,8 @@ pub struct AppSettings {
     pub browser_token: String,
     pub show_drop_zone: bool,
     pub drop_zone_position: Option<(i32, i32)>,
+    pub check_updates: bool,
+    pub handle_magnet_links: bool,
 }
 
 impl Default for AppSettings {
@@ -62,6 +64,8 @@ impl Default for AppSettings {
             browser_token: String::new(),
             show_drop_zone: false,
             drop_zone_position: None,
+            check_updates: true,
+            handle_magnet_links: false,
         }
     }
 }

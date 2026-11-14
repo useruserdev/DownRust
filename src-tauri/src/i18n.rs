@@ -46,6 +46,7 @@ pub enum Message {
     DropZone,
     Quit,
     DownloadComplete,
+    NewDownload,
 }
 
 /// The tray tooltip: how many downloads run and their total speed.
@@ -100,6 +101,7 @@ pub fn text(lang: Lang, key: Message) -> &'static str {
         (Lang::En, Message::DropZone) => "Drop zone",
         (Lang::En, Message::Quit) => "Quit",
         (Lang::En, Message::DownloadComplete) => "Download complete",
+        (Lang::En, Message::NewDownload) => "New download",
         (Lang::Ru, Message::Show) => "Показать DownRust",
         (Lang::Ru, Message::AddDownload) => "Добавить загрузку...",
         (Lang::Ru, Message::PauseAll) => "Пауза для всех",
@@ -107,6 +109,7 @@ pub fn text(lang: Lang, key: Message) -> &'static str {
         (Lang::Ru, Message::DropZone) => "Зона перетаскивания",
         (Lang::Ru, Message::Quit) => "Выход",
         (Lang::Ru, Message::DownloadComplete) => "Загрузка завершена",
+        (Lang::Ru, Message::NewDownload) => "Новая загрузка",
     }
 }
 

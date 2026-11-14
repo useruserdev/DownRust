@@ -3,7 +3,9 @@ import {HStack, StackItem, VStack} from '@astryxdesign/core/Layout';
 import {Heading, Text} from '@astryxdesign/core/Text';
 import {SegmentedControl, SegmentedControlItem} from '@astryxdesign/core/SegmentedControl';
 import {Switch} from '@astryxdesign/core/Switch';
+import {api} from '../../ipc/commands';
 import type {AppSettings, ThemeMode} from '../../ipc/types';
+import {errorText, notify} from '../../lib/notify';
 import type {SettingsPatch} from '../../state/settings';
 import {t} from '../../i18n';
 import type {LanguagePreference, MessageKey} from '../../i18n';
@@ -68,6 +70,18 @@ export function GeneralSection({settings, update}: SectionProps) {
           width="100%"
         />
       ))}
+      <Switch
+        label={t('update.magnetLabel')}
+        description={t('update.magnetHint')}
+        value={settings.handleMagnetLinks}
+        onChange={value => {
+          update({handleMagnetLinks: value});
+          api.setMagnetHandler(value).catch(err => notify('error', errorText(err)));
+        }}
+        labelPosition="start"
+        labelSpacing="spread"
+        width="100%"
+      />
     </VStack>
   );
 }
