@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#ECE8E4"/></linearGradient>
+      <linearGradient id="fg" gradientUnits="userSpaceOnUse" x1="0" y1="200" x2="0" y2="880"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#E4471A"/></linearGradient></defs><rect x="0" y="0" width="1024" height="1024" rx="230" fill="url(#bg)"/>
+  <g fill="none" stroke="url(#fg)" stroke-width="96" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M336 206 L512 370 L688 206" stroke-opacity="0.35"/>
+    <path d="M336 362 L512 526 L688 362" stroke-opacity="0.65"/>
+    <path d="M336 518 L512 682 L688 518" stroke-opacity="1"/>
+  </g>
+  <rect x="312" y="786" width="400" height="68" rx="34" fill="url(#fg)"/>
+</svg>
